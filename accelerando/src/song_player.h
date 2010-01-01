@@ -12,14 +12,14 @@
 class SongPlayer {
     private:
         Song *song;
-        int tick_count;
-        int currBarIndex;
-        Bar currBar;
-        int currNoteIndex;
+        //int currBarIndex;
+        //Bar currBar;
+        //int currNoteIndex;
         int results[4]; //0 = Perfect, 1 = Good, 2 = Satisfactory; 3 = misses (calculated at the end)
-        int tsig;
        
         // Rendering
+        int tick_count;
+        int tsig;
         int screen_width;
         int screen_height;
         int ROW_X;
@@ -38,7 +38,6 @@ class SongPlayer {
         void createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol, LTexture *gBuffer, Song* song );
         void updateMusicSurface( SDL_Renderer *gRenderer, LTexture* gBuffer, int xCoord, int oldXCoord );
         void genPressRelease(Song * song, int count_notes, Note * pressEvents, Note * releaseEvents);
-        void processTime();
 
     public:
         SongPlayer(std::string filename, SDL_Renderer *gRenderer, LTexture gSymbol, LTexture *gBuffer);

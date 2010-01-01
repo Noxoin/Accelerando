@@ -83,7 +83,7 @@ void SongPlayer::genPressRelease(Song * song, int count_notes, Note * pressEvent
         for(int j = 0; j < bar.length; ++j) {
             Note note = bar.notes[j];
             pressEvents[k].time = (i*tsig*2+note.time)*8;
-            releaseEvents[k].time = (i*tsig*2+note.time + note.duration)*8-1;
+            releaseEvents[k].time = (i*tsig*2+note.time + note.duration)*8-4;
             pressEvents[k].value = note.value;
             releaseEvents[k].value = note.value;
             k++;
@@ -116,8 +116,6 @@ SongPlayer::SongPlayer(std::string filename, SDL_Renderer *gRenderer, LTexture g
     releasedIndex = 0;
 
     tick_count = -58;
-    currBarIndex = -1;
-    currNoteIndex = -3;
     results[0] = 0;
     results[1] = 0;
     results[2] = 0;
@@ -131,6 +129,7 @@ SongPlayer::SongPlayer(std::string filename, SDL_Renderer *gRenderer, LTexture g
     int h;
     xCord = -320;
     oldXCord = xCord;
+
 }
 
 SongPlayer::~SongPlayer(){
@@ -143,7 +142,7 @@ SongPlayer::~SongPlayer(){
 }
 
 void SongPlayer::noteReleasedHandler(SDL_Event e) {
-    //Gpio::setValue(Gpio::getPressedPin(*(unsigned char*) e.user.data1), Gpio::LOW);
+    Gpio::setValue(Gpio::getPressedPin(*(unsigned char*) e.user.data1), Gpio::LOW);
     for(int i = pressedIndex; releasedEvents[i].time < tick_count + 8; ++i) {
         if(releasedEvents[i].value != *(unsigned char*) e.user.data1 || releasedOccurred[i] > 0) {
             continue;
@@ -151,23 +150,20 @@ void SongPlayer::noteReleasedHandler(SDL_Event e) {
             //found the corresponding note
             int diff = tick_count - releasedEvents[i].time;
             diff = (diff < 0) ? diff*(-1): diff;
-            if(diff < 1) {
+            if(diff < 4) {
                 //PERFECT
                 results[0]++;
                 releasedOccurred[i] = 300;
-            } else if (diff < 3) {
+            } else if (diff < 6) {
                 results[1]++;
                 releasedOccurred[i] = 100;
-            } else if (diff < 5) {
-                results[2]++;
-                releasedOccurred[i] = 50;
             }
         }
     }
 }
 
 void SongPlayer::notePressedHandler(SDL_Event e) {
-    //Gpio::setValue(Gpio::getPressedPin(*(unsigned char*) e.user.data1), Gpio::HIGH);
+    Gpio::setValue(Gpio::getPressedPin(*(unsigned char*) e.user.data1), Gpio::HIGH);
     for(int i = pressedIndex; pressedEvents[i].time < tick_count + 8; ++i) {
         if(pressedEvents[i].value != *(unsigned char*) e.user.data1 || pressedOccurred[i] > 0) {
             continue;
@@ -175,14 +171,14 @@ void SongPlayer::notePressedHandler(SDL_Event e) {
             //found the corresponding note
             int diff = tick_count - pressedEvents[i].time;
             diff = (diff < 0) ? diff*(-1): diff;
-            if(diff < 1) {
+            if(diff < 2) {
                 //PERFECT
                 results[0]++;
                 pressedOccurred[i] = 300;
-            } else if (diff < 3) {
+            } else if (diff < 4) {
                 results[1]++;
                 pressedOccurred[i] = 100;
-            } else if (diff < 5) {
+            } else if (diff < 6) {
                 results[2]++;
                 pressedOccurred[i] = 50;
             }
@@ -190,16 +186,19 @@ void SongPlayer::notePressedHandler(SDL_Event e) {
     }
 }
 
-void SongPlayer::processTime() {
-    if(tick_count % (16*tsig) == (16*tsig - 4)) {
+void SongPlayer::timerHandler( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
+    if(tick_count > releasedEvents[count_notes-1].time + 7) {
+        printf("Song has Finished\n");
+        finished = true;
+        return;
+    }
+
+    if((tick_count+16*tsig) % (16*tsig) == (16*tsig - 4)) {
         b.beep(466.164, 100);
-    } else if(tick_count % 16 == 12) {
+    } else if((tick_count + 16*tsig) % 16 == 12) {
         b.beep(233.082, 100);
     }
 
-
-    //std::thread t1(&SongPlayer::updateScreen, this, gRenderer, gBuffer);
-    //t1.detach();
 
     while(pressedEvents[pressedIndex].time < tick_count - 8) {
         pressedIndex++;
@@ -218,29 +217,19 @@ void SongPlayer::processTime() {
     for(int i = releasedIndex; releasedEvents[i].time < tick_count + 7; ++i) {
         if(releasedEvents[i].time == tick_count + 6) {
             Note note = releasedEvents[i];
-            Gpio::setValue(Gpio::getLEDPin(note.value), Gpio::HIGH);
+            Gpio::setValue(Gpio::getLEDPin(note.value), Gpio::LOW);
         }
     }
-    
-}
-
-void SongPlayer::timerHandler( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
-    if(tick_count > releasedEvents[count_notes-1].time + 7) {
-        printf("Song has Finished\n");
-        finished = true;
-        return;
-    }
-
-    processTime();
+    //processTime();
 
     int tick_mod = (tick_count) % 8;
     //printf("tick_mod: %d\t", tick_mod);
     if(tick_mod % 2 == 0) {
+        Gpio::setValue(Gpio::CLK, Gpio::HIGH);
         oldXCord = xCord;
         xCord += 5.6198*2;//9.35;
         updateMusicSurface( gRenderer, gBuffer, (int) xCord, (int)oldXCord );
         //printf("set HIGH\t");
-        Gpio::setValue(Gpio::CLK, Gpio::HIGH);
     } else {
         //printf("set LOW\t");
         Gpio::setValue(Gpio::CLK, Gpio::LOW);
@@ -254,7 +243,7 @@ int SongPlayer::getTempo() {
 }
 
 void SongPlayer::getResults(int (&s)[4]) {
-    results[3] = count_notes - results[0] - results[1] - results[2];
+    results[3] = count_notes*2 - results[0] - results[1] - results[2];
     s[0] = results[0];
     s[1] = results[1];
     s[2] = results[2];

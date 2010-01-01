@@ -6,7 +6,7 @@ class Gpio {
         const static int HIGH = 1;
         const static int LOW = 0;
 
-        const static int CLK = 9;
+        const static int CLK = 31;
 
         const static int LED_PINS[20];
         const static int PRESSED_PINS[20];

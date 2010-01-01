@@ -131,7 +131,7 @@ std::string song_selection() {
             }
             if( (event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_LEFT)){
                 //addPage -= SONGS_PER_PAGE;
-                if(currSel-SONGS_PER_PAGE > 0) {
+                if(currSel-SONGS_PER_PAGE >= 0) {
                     currSel -= SONGS_PER_PAGE;
                 }
             }
@@ -288,6 +288,7 @@ void play(std::string filename) {
                             break;
                         case NOTE_RELEASED:
                             //printf("Piano Key %d was released\n", *(unsigned char *)event.user.data1);
+                            sp.noteReleasedHandler(event);
                             break;
                         case TIMER_EVENT:
                             //printf("Time: %02ds\n", ++count);

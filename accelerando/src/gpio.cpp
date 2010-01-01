@@ -8,12 +8,12 @@
 
 //#define O_WRONLY 01
 const int Gpio::LED_PINS[] = { 13, 14, 15,  // A3 - B3
-                              10, 17, 18, 19, 4, 5, 6, 7, 8, 1, 2, 3, // C4 - B4
+                              43, 17, 18, 19, 4, 5, 6, 7, 8, 1, 2, 3, // C4 - B4
                               9, 10, 61, 60, 63 //C5 - E5
                             };
                                 
 const int Gpio::PRESSED_PINS[] = { 13, 14, 15,  // A3 - B3
-                                  10, 17, 18, 19, 4, 5, 6, 7, 8, 1, 2, 3, // C4 - B4
+                                  29, 17, 18, 19, 4, 5, 6, 7, 8, 1, 2, 3, // C4 - B4
                                   9, 10, 61, 60, 63 //C5 - E5
                                 };
 
@@ -50,6 +50,8 @@ void allgpio(int fd) {
     for(int i = 0; i < 20; ++i) {
         sprintf(buf, "%d", Gpio::LED_PINS[i]);
         write(fd, buf, 100);
+        sprintf(buf, "%d", Gpio::PRESSED_PINS[i]);
+        write(fd, buf, 100);
     }
 }
 
@@ -63,9 +65,8 @@ void Gpio::init() {
     setDirection(Gpio::CLK, Gpio::OUT);
     for(int i = 0; i < 20; ++i) {
         setDirection(Gpio::LED_PINS[i], Gpio::OUT);
+        setDirection(Gpio::PRESSED_PINS[i], Gpio::OUT);
     }
-    setDirection(11,Gpio::OUT);
-
     Gpio::reset();
 }
 
@@ -74,8 +75,8 @@ void Gpio::reset(){
     Gpio::setValue(Gpio::CLK, Gpio::LOW);
     for(int i = 0; i < 20; ++i) {
         Gpio::setValue(Gpio::LED_PINS[i], Gpio::LOW);
+        Gpio::setValue(Gpio::PRESSED_PINS[i], Gpio::LOW);
     }
-    Gpio::setValue(11, Gpio::LOW);
 }
 
 void Gpio::setValue(int gpio, int value) {
@@ -103,15 +104,19 @@ void Gpio::clean() {
 
 int Gpio::getLEDPin(int midiNote) {
     if(midiNote < 57 || midiNote - 57 > 19) {
+        printf("No such Key\n");
         return -1;
     }
+    printf("Key: %d\n", LED_PINS[midiNote-57]);
     return LED_PINS[midiNote-57];
 }
 
 int Gpio::getPressedPin(int midiNote) {
     if(midiNote < 57 || midiNote - 57 > 19) {
+        printf("No such Key\n");
         return -1;
     }
+    printf("Key: %d\n", PRESSED_PINS[midiNote-57]);
     return PRESSED_PINS[midiNote-57];
 }
 
