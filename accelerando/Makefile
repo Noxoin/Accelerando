@@ -27,6 +27,12 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c $(HEADERS)
 	mkdir -p $(OBJDIR)
 	$(CC) -c -o $@ $< $(CFLAG)
 
+test_gpio: test/test_gpio_map.c $(OBJDIR)/gpio.o
+	mkdir -p $(BINDIR)/$(TESTDIR)
+	$(CC) -o $@ $^ $(CFLAGS)
+	./$@
+	rm $@
+
 clean:
 	rm -rf $(OBJDIR) $(EXE) $(BINDIR)
 
