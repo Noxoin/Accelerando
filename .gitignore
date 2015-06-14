@@ -3,6 +3,7 @@
 *.ko
 *.obj
 *.elf
+bin
 
 # Precompiled Headers
 *.gch
@@ -27,6 +28,22 @@
 *.i*86
 *.x86_64
 *.hex
+configure
+accelerando/accelerando
 
 # Debug files
 *.dSYM/
+
+# AutoHell Tools
+*.in
+*.m4
+autom4te.cache*
+stamp-h1
+config.log
+config.status
+config.h
+.deps
+.dirstamp
+
+# Mac Files
+.DS_Store
