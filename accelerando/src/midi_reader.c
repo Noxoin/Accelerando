@@ -203,6 +203,7 @@ void loadMIDI(char *filename, Song *song) {
 
     midi = (MIDI_File *) malloc(sizeof(MIDI_File));
     file = fopen(filename , "rb" );
+
     if (file==NULL) {fputs ("File error",stderr); exit (1);}
 
     // obtain file size:
@@ -270,7 +271,6 @@ void loadMIDI(char *filename, Song *song) {
 
         buffer = (unsigned char*) malloc(sizeof(char)*length);
         fread(buffer, 1, length, file);
-        //Data is now in Buffer
 
 #ifdef DEBUG
         for(i = 0; i < length; i++) {
