@@ -36,8 +36,8 @@ test_gpio: test/test_gpio_map.c $(OBJDIR)/gpio.o
 clean:
 	rm -rf $(OBJDIR) $(EXE) $(BINDIR)
 
-#run:
-#	@echo "============================"
-#	@echo "Starting Accelerando        "
-#	@echo "============================"
-#	./$(EXE)
+run:
+	@echo "============================"
+	@echo "Starting Accelerando        "
+	@echo "============================"
+	./$(EXE)
