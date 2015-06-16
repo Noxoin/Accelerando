@@ -181,7 +181,6 @@ void loadTrack(unsigned char *buffer, int length, Track **track) {
         }
         printf("\n");
 #endif
-
                     
     }
     (*track)->numEvents = event_count;
@@ -271,6 +270,7 @@ void loadMIDI(char *filename, Song *song) {
 
         buffer = (unsigned char*) malloc(sizeof(char)*length);
         fread(buffer, 1, length, file);
+        //Data is now in Buffer
 
 #ifdef DEBUG
         for(i = 0; i < length; i++) {
