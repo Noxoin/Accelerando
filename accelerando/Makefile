@@ -4,6 +4,7 @@ CFLAG=-I.
 BUILDDIR=build
 SRCDIR=src
 BINDIR=bin
+TESTDIR=tests
 OBJDIR=$(BINDIR)/obj
 
 EXE=accelerando
@@ -16,7 +17,6 @@ all: build
 
 build: $(OBJ)
 	$(CC) -o $(EXE) $^ $(CFLAGS)
-	mkdir -p $(BINDIR)
 	cp $(EXE) $(BINDIR)/$(EXE)
 
 debug: CFLAGS += -DDEBUG -g
@@ -26,6 +26,12 @@ debug: build
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(HEADERS)
 	mkdir -p $(OBJDIR)
 	$(CC) -c -o $@ $< $(CFLAG)
+
+test_midi_reader: $(TESTDIR)/test_midi_reader.c $(OBJDIR)/midi_reader.o
+	mkdir -p $(BINDIR)/$(TESTDIR)
+	$(CC) -o $@ $^ $(CFLAGS)
+	./$@
+	rm $@
 
 test_gpio: test/test_gpio_map.c $(OBJDIR)/gpio.o
 	mkdir -p $(BINDIR)/$(TESTDIR)
