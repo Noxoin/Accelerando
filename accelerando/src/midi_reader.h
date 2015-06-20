@@ -6,14 +6,14 @@ typedef struct {
     int delta_time;
     int data_length;
     int subEventType;
-    unsigned char *data;
+    unsigned char data[10];
 } Event;
 
 typedef struct {
     int type;
     int length;
     int numEvents;
-    Event *events;
+    Event events[1000];
 } Track;
 
 typedef struct {
@@ -21,7 +21,7 @@ typedef struct {
     short format;
     short ntrks;
     short division;
-    Track *tracks;
+    Track tracks[16];
 } MIDI_File;
 
 void loadMIDI();

@@ -3,6 +3,119 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+short key;
+short major_minor;
+short tsig_numerator;
+short tsig_denominator;
+
+int division;       // num of Ticks per beat
+int ticks_per_metronome;
+int tempo;
+
+int numbars;
+
+void processTrack(Track *track, Song **song) {
+    int i, time, numNotes, bar_time, currBar;
+    Song *s = *song;
+
+    time = 0;
+    numNotes = 0;
+    bar_time = 0;
+    currBar = 0;
+
+    for(i = 0; i < track->numEvents; ++i) {
+        Event *event;
+        event = &(track->events[i]);
+        time += event->delta_time;
+        if(event->type == META) {
+            int k;
+            switch(event->subEventType) {
+                case 88: //Time Signature
+                    tsig_numerator = (short) event->data[0];
+                    if(event->data[1] == (unsigned char) 1) {
+                        tsig_denominator = 2;
+                    } else if(event->data[1] == (unsigned char) 2) {
+                        tsig_denominator = 4;
+                    } else if (event->data[1] == (unsigned char) 3) {
+                        tsig_denominator = 8;
+                    } else if (event->data[1] == (unsigned char) 4) {
+                        tsig_denominator = 16;
+                    }
+                    ticks_per_metronome = (int) event->data[2];
+                    break;
+                case 89: //Key Signature
+                    key = (short) event->data[0];
+                    major_minor = (short) event->data[1];
+                    break;
+                case 3: //Song Name
+                    s->name_length = event->data_length;
+                    if(s->name_length > 49) {
+                        s->name_length = 49;
+                    }
+#ifdef DEBUG
+                    printf("Length: %d\t", event->data_length);
+                    printf("Song name: ");
+#endif
+                    for( k = 0; k < s->name_length; ++k) {
+                        s->name[k] = (char) event->data[k];
+#ifdef DEBUG
+                        printf("%c", (char) event->data[k]);
+#endif
+                    }
+                    s->name[k] = '\0';
+#ifdef DEBUG
+                    printf("\tk: %d", k);
+                    printf("\n");
+#endif
+                    break;
+                case 81: // Tempo
+                    tempo = 0;
+                    for( k = 0; k < event->data_length; ++k) {
+                        tempo = tempo << 8 | (int) event->data[k];
+                    }
+                    break;
+            }
+        } else if (event->type == MIDI) {
+            if(event->subEventType == 144) {
+                int dur=0;
+                int seek = i+1;
+                Note note;
+                note.value = (short) event->data[0];
+                if(time-bar_time > division*tsig_numerator-division/4) {
+                    bar_time += division*tsig_numerator;
+                    currBar++;
+                    numNotes=0;
+                }
+                note.time = (time-bar_time)/(division/2);
+                if(note.time < 0) {
+                    note.time = 0;
+                }
+                // On Press Event
+                // Find when it is released
+                for( ; seek < track->numEvents; ++seek) {
+                    Event *e;
+                    e = &(track->events[seek]);
+                    dur += e->delta_time;
+                    if(e->subEventType == 128 && note.value == (short) e->data[0]) {
+                        break;
+                    }
+                }
+                note.duration = (dur+division/4)/(division/2);
+                s->bars[currBar].notes[numNotes++] = note;
+            }
+            s->bars[currBar].key = key;
+            s->bars[currBar].major_minor = major_minor;
+            s->bars[currBar].tsig_numerator = tsig_numerator;
+            s->bars[currBar].tsig_denominator = tsig_denominator;
+            s->bars[currBar].tempo = tempo;
+            s->bars[currBar].length = (long) numNotes;
+        }
+        s->length = currBar + 1;
+    }
+                    
+
+}
+
 int getNextInt(FILE *file) {
     unsigned char *temp;
     int type;
@@ -16,27 +129,20 @@ int getNextInt(FILE *file) {
     return type;
 }
 
-void processTrack(unsigned char *buffer, int length, Track **track) {
+void loadTrack(unsigned char *buffer, int length, Track **track) {
     int event_count = 0;
     int l = 0, i = 0;
     Event *event;
-    Event *events;
 
-
-    events = (Event *) malloc(sizeof(Event)*length/2);
     while(l < length) {
         int type, eventLen, subEventType;
         int delta_time = 0;
-
-        if(event_count >= length/2) {
-            printf("Too many events, need to realloc for more memory");
-        }
         
         do {
             delta_time = delta_time << 7 | ((int) buffer[l] & 127);
         } while(buffer[l++] & (unsigned char) 128);
 
-        *event = events[event_count++];
+        event = &((*track)->events[event_count++]);
         type = (int) buffer[l++];
 
         if(type == 255) {
@@ -58,7 +164,6 @@ void processTrack(unsigned char *buffer, int length, Track **track) {
             event->type = MIDI;
         }
 
-        event->data = (unsigned char *) malloc(sizeof(unsigned char)*eventLen);
         event->delta_time = delta_time;
         event->data_length = eventLen;
         event->subEventType = subEventType;
@@ -76,14 +181,16 @@ void processTrack(unsigned char *buffer, int length, Track **track) {
         }
         printf("\n");
 #endif
+
+                    
     }
     (*track)->numEvents = event_count;
-    (*track)->events = events;
+
     return;
 
 }
 
-void loadMIDI(char *filename, Note *song) {
+void loadMIDI(char *filename, Song *song) {
     FILE *file;
     long lSize;
     unsigned char * buffer;
@@ -140,7 +247,8 @@ void loadMIDI(char *filename, Note *song) {
     midi->format = (short) buffer[0]<<8 | buffer[1];
     midi->ntrks = (short) buffer[2]<<8 | buffer[3];
     midi->division = (short) buffer[4]<<8 | buffer[5];
-    midi->tracks = (Track *) malloc(midi->ntrks * sizeof(Track));
+    division = midi->division;
+    //midi->tracks = (Track *) malloc(midi->ntrks * sizeof(Track));
 #ifdef DEBUG
     //printf("midi->ntrks * sizeof(Track*) = %lu\n", midi->ntrks * sizeof(Track*));
     printf("Format: %d\tNtrks: %d\tTicksPerDivision: %d\n", midi->format, midi->ntrks, midi->division);
@@ -177,20 +285,22 @@ void loadMIDI(char *filename, Note *song) {
         printf("\n");
 #endif
 
-        *track = midi->tracks[trk_count];
+        track = &(midi->tracks[trk_count]);
         track->type = type;
         track->length = length;
 #ifdef DEBUG
         printf("Track #: %d\t Length: %d\n", trk_count, track->length);
 #endif
-        processTrack(buffer, length, &track);
-        printf("\tlength: %d\tnumEvents: %d\t", track->length, track->numEvents);
+        loadTrack(buffer, length, &track);
+        processTrack(track, &song);
+#ifdef DEBUG
+        printf("\tlength: %d\tnumEvents: %d\n", track->length, track->numEvents);
+#endif
         trk_count++;
 
         free(buffer);
     }
 
-/*
 #ifdef DEBUG
     printf("header_length: %d\tformat: %d\tntrks: %d\tdivision: %d\n", 
                 midi->header_length, 
@@ -203,13 +313,23 @@ void loadMIDI(char *filename, Note *song) {
         int j;
         Track *track;
 
-        *track = midi->tracks[i];
+        track = &(midi->tracks[i]);
         printf("Track %d:\n", i);
-        printf("\tlength: %d\tnumEvents: %d\t", track->length, track->numEvents);
+        printf("\tlength: %d\tnumEvents: %d\n", track->length, track->numEvents);
+        for(j = 0; j < track->numEvents; ++j) {
+            int k;
+            Event *event;
+            event = &(track->events[j]);
+            printf("\t\tdelta: %d\tsubEventType: %d\t data: ", event->delta_time, event->subEventType);
+            for( k = 0; k < event->data_length; ++k) {
+                printf("%02x", event->data[k]);
+            }
+            printf("\n");
+
+        }
     }
 
 #endif
-*/
 
     free(midi);
     fclose(file);

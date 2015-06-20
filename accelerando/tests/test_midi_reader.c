@@ -4,9 +4,51 @@
 #include "../src/structs.h"
 
 int main() {
+    int i,j;
     printf("Starting Test MIDI Reader.....\n");
     
-    Note song[10];
+    Song *song = (Song *) malloc(sizeof(Song));
     loadMIDI("res/song.mid", song);
+    printf("Song name: ");
+    for(i = 0; i < song->name_length; ++i) {
+        printf("%c", song->name[i]);
+    }
+    printf("\n");
+    printf("Length of song: %d\n", song->length);
+    for( i = 0; i < song->length; ++i) {
+        Bar bar = song->bars[i];
+        printf("Bar %03d:\t", i);
+        printf("Key: %d\t TimeSig: %d/%d\n", bar.key, bar.tsig_numerator, bar.tsig_denominator);
+        for( j = 0; j < bar.length; ++j) {
+            Note note = bar.notes[j];
+            printf("\t{%d,%d,%d}", note.time, note.duration, note.value);
+        }
+        printf("\n");
+    }
+
+    free(song);
+
+    song = (Song *) malloc(sizeof(Song));
+
+    loadMIDI("res/twinkle_twinkle_little_star.mid", song);
+    printf("Song name: ");
+    for(i = 0; i < song->name_length; ++i) {
+        printf("%c", song->name[i]);
+    }
+    printf("\n");
+    printf("Length of song: %d\n", song->length);
+    for( i = 0; i < song->length; ++i) {
+        Bar bar = song->bars[i];
+        printf("Bar %03d:\t", i);
+        printf("Key: %d\t TimeSig: %d/%d\n", bar.key, bar.tsig_numerator, bar.tsig_denominator);
+        for( j = 0; j < bar.length; ++j) {
+            Note note = bar.notes[j];
+            printf("\t{%d,%d,%d}", note.time, note.duration, note.value);
+        }
+        printf("\n");
+    }
+
+
+    free(song);
     return 0;
 }
