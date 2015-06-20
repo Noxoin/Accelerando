@@ -43,7 +43,4 @@ clean:
 	rm -rf $(OBJDIR) $(EXE) $(BINDIR)
 
 run:
-	@echo "============================"
-	@echo "Starting Accelerando        "
-	@echo "============================"
 	./$(EXE)
