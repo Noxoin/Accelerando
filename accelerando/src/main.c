@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "midi_reader.h"
-#include "structs.h"
+#include "song.h"
 
 int main() {
     printf("Starting up Accelerando......\n");

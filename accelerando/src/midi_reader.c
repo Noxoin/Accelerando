@@ -1,5 +1,5 @@
 #include "midi_reader.h"
-#include "structs.h"
+#include "song.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -100,6 +100,9 @@ void processTrack(Track *track, Song **song) {
                         break;
                     }
                 }
+#ifdef DEBUG
+                printf("Went through %d events for %02x\n", seek-i, note.value);
+#endif
                 note.duration = (dur+division/4)/(division/2);
                 s->bars[currBar].notes[numNotes++] = note;
             }
@@ -107,7 +110,7 @@ void processTrack(Track *track, Song **song) {
             s->bars[currBar].major_minor = major_minor;
             s->bars[currBar].tsig_numerator = tsig_numerator;
             s->bars[currBar].tsig_denominator = tsig_denominator;
-            s->bars[currBar].tempo = tempo;
+            s->bars[currBar].tempo = 60000000/tempo;
             s->bars[currBar].length = (long) numNotes;
         }
         s->length = currBar + 1;
