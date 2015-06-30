@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define O_WRONLY 01
+//#define O_WRONLY 01
 
 char* gpio_map[68] =   { "",     "pg3",  "pb19", "pb18", "pg6",  "pg5",  "pg4",  "pg1",  "pg2",  "pg0", 
                          "ph14", "ph15", "pi6",  "pi5",  "pi4",  "pg11", "pg10", "pg9",  "pg8",  "pg7",
@@ -13,6 +13,110 @@ char* gpio_map[68] =   { "",     "pg3",  "pb19", "pb18", "pg6",  "pg5",  "pg4", 
                          "pd14", "pd13", "pb2",  "pd25", "pd24", "pd26", "pd27", "pd23", "pd22", "pd21",
                          "pi11", "pi13", "pi10", "pi12", "pb13", "pb11", "pb10", "ph7"
                        };
+
+void allgpio(int fd) {
+    
+    char buf[100];
+
+    sprintf(buf, "%d", GPIO_CLK);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_A2);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_AS2);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_B2);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_C3);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_CS3);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_D3);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_DS3);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_E3);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_F3);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_FS3);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_G3);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_GS3);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_A3);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_AS3);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_B3);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_C4);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_CS4);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_D4);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_DS4);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_E4);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_F4);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_FS4);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_G4);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_GS4);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_A4);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_AS4);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_B4);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_C5);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_CS5);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_D5);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_DS5);
+    write(fd, buf, strlen(buf));
+
+    sprintf(buf, "%d", GPIO_E5);
+    write(fd, buf, strlen(buf));
+}
 
 void gpio_init() {
     int fd;
@@ -125,107 +229,4 @@ void gpio_clean() {
     close(fd);
 }
 
-void allgpio(int fd) {
-    
-    char buf[100];
-
-    sprintf(buf, "%d", GPIO_CLK);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_A2);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_AS2);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_B2);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_C3);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_CS3);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_D3);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_DS3);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_E3);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_F3);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_FS3);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_G3);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_GS3);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_A3);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_AS3);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_B3);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_C4);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_CS4);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_D4);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_DS4);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_E4);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_F4);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_FS4);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_G4);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_GS4);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_A4);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_AS4);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_B4);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_C5);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_CS5);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_D5);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_DS5);
-    write(fd, buf, strlen(buf));
-
-    sprintf(buf, "%d", GPIO_E5);
-    write(fd, buf, strlen(buf));
-}
 
