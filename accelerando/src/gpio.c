@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//#define O_WRONLY 01
+#define O_WRONLY 01
 
 char* gpio_map[68] =   { "",     "pg3",  "pb19", "pb18", "pg6",  "pg5",  "pg4",  "pg1",  "pg2",  "pg0", 
                          "ph14", "ph15", "pi6",  "pi5",  "pi4",  "pg11", "pg10", "pg9",  "pg8",  "pg7",
