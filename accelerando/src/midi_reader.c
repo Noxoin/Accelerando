@@ -1,5 +1,4 @@
 #include "midi_reader.h"
-#include "song.h"
 #include <stdio.h>
 #include <stdlib.h>
 

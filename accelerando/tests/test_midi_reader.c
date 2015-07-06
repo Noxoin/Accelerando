@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../src/midi_reader.h"
-#include "../src/song.h"
 
 int main() {
     int i,j;

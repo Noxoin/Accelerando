@@ -1,3 +1,4 @@
+#include "song.h"
 
 typedef enum { MIDI, SYS, META } MidiEType;
 
@@ -24,5 +25,5 @@ typedef struct {
     Track tracks[16];
 } MIDI_File;
 
-void loadMIDI();
+void loadMIDI(char *filename, Song *song);
 

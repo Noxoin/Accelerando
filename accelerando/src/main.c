@@ -1,12 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "midi_reader.h"
-#include "song.h"
 
 int main() {
     printf("Starting up Accelerando......\n");
     
-    Note song[10];
+    Song *song;
     loadMIDI("res/song.mid", song);
 #ifdef DEBUG
     printf("DEBUG has been set..\n");
