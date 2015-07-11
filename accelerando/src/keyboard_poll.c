@@ -1,4 +1,5 @@
 #include "keyboard_poll.h"
+#include <SDL2/SDL.h>
 
 int poll_status = 0;
 int thread_count = 0;
@@ -12,7 +13,6 @@ void *polling(void *arg) {
     int mode = SND_RAWMIDI_SYNC;
     snd_rawmidi_t* midiin = NULL;
     const char* portname = "hw:2,0,0";
-    int count = 0;
     char buffer[1];
 
     printf("I'm here\n");
@@ -32,18 +32,24 @@ void *polling(void *arg) {
                 if((status = snd_rawmidi_read(midiin, buffer, 1)) < 0) {
                     errormessage("Problem reading MIDI input: %s", snd_strerror(status));
                 }
-                unsigned char note = buffer[0];
+                unsigned char *note = (unsigned char*)malloc(sizeof(unsigned char));
+                *note = buffer[0];
                 if((status = snd_rawmidi_read(midiin, buffer, 1)) < 0) {
                     errormessage("Problem reading MIDI input: %s", snd_strerror(status));
                 }
+                SDL_Event e;
+                e.type = SDL_USEREVENT;
+                e.user.data1 = note;
                 if(buffer[0] == 0) {
                     // Generate SDL_KeyBoardPressed_Event
-                    printf("Note released: %02d\n", note);
+                    e.user.code = NOTE_RELEASED;
+                    printf("Note released: %02d\n", *note);
                 } else {
                     // Generate SDL_KeyboardReleased Event
-                    printf("Note pressed: %02d\n", note);
+                    e.user.code = NOTE_PRESSED;
+                    printf("Note pressed: %02d\n", *note);
                 }
-                count++;
+                SDL_PushEvent(&e);
             }
         } 
         fflush(stdout);

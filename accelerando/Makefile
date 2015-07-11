@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-I. -lm -lasound
+CFLAGS=-I. -lm -lasound -lSDL2
 CFLAG=-I.
 BUILDDIR=build
 SRCDIR=src
@@ -33,7 +33,7 @@ test_midi_reader: $(TESTDIR)/test_midi_reader.c $(OBJDIR)/midi_reader.o
 	./$@
 	rm $@
 
-test_keyboard_poll: $(TESTDIR)/test_keyboard_poll.c $(OBJDIR)/keyboard_poll.o
+test_keyboard_UserEvent: $(TESTDIR)/test_keyboard_UserEvent.c $(OBJDIR)/keyboard_poll.o
 	mkdir -p $(BINDIR)/$(TESTDIR)
 	$(CC) -o $@ $^ $(CFLAGS)
 	./$@
