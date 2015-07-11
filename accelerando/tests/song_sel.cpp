@@ -256,16 +256,19 @@ bool loadMedia()
 
 	//Load PNG texture
 	//Load default surface
-	gKeyPressSurfaces[ KEY_PRESS_SURFACE_DEFAULT ] = loadTexture( "../res/screen/WelcomeScreen.png" );
-	if( gKeyPressSurfaces[ KEY_PRESS_SURFACE_DEFAULT ] == NULL )
+		
+	//gKeyPressSurfaces[ KEY_PRESS_SURFACE_DEFAULT ] = loadTexture( "../res/screen/WelcomeScreen.png" );
+	//if( gKeyPressSurfaces[ KEY_PRESS_SURFACE_DEFAULT ] == NULL )
+	if( !gKeyPressSurfaces[ KEY_PRESS_SURFACE_DEFAULT ].loadFromFile( "../res/screen/WelcomeScreen.png" ) )
 	{
 		printf( "Failed to load default image!\n" );
 		success = false;
 	}
 
 	//Load selection screen
-	gKeyPressSurfaces[ KEY_PRESS_SURFACE_ENTER ] = loadTexture( "../res/screen/SongSelectionScreen.png" );
-	if( gKeyPressSurfaces[ KEY_PRESS_SURFACE_ENTER ] == NULL )
+	//gKeyPressSurfaces[ KEY_PRESS_SURFACE_ENTER ] = loadTexture( "../res/screen/SongSelectionScreen.png" );
+	//if( gKeyPressSurfaces[ KEY_PRESS_SURFACE_ENTER ] == NULL )
+	if( !gKeyPressSurfaces[ KEY_PRESS_SURFACE_ENTER ].loadFromFile( "../res/screen/SongSelectionScreen.png" ) )
 	{
 		printf( "Failed to load up image!\n" );
 		success = false;
@@ -318,11 +321,12 @@ void close()
 	//Deallocate surfaces
 	for( int i = 0; i < KEY_PRESS_SURFACE_TOTAL; ++i )
 	{
-		SDL_DestroyTexture( gKeyPressSurfaces[ i ] );
-		gKeyPressSurfaces[ i ] = NULL;
+		//SDL_DestroyTexture( gKeyPressSurfaces[ i ] );
+		gKeyPressSurfaces[ i ].free();// = NULL;
 	}
     //Free loaded images
 	gDotTexture.free();
+	gTexture.free();
     
 	//Destroy window
 	SDL_DestroyRenderer( gRenderer );
@@ -333,33 +337,6 @@ void close()
 	//Quit SDL subsystems
 	IMG_Quit();
 	SDL_Quit();
-}
-
-SDL_Texture* loadTexture( std::string path )
-{
-	//The final texture
-	SDL_Texture* newTexture = NULL;
-
-	//Load image at specified path
-	SDL_Surface* loadedSurface = IMG_Load( path.c_str() );
-	if( loadedSurface == NULL )
-	{
-		printf( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
-	}
-	else
-	{
-		//Create texture from surface pixels
-        newTexture = SDL_CreateTextureFromSurface( gRenderer, loadedSurface );
-		if( newTexture == NULL )
-		{
-			printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
-		}
-
-		//Get rid of old loaded surface
-		SDL_FreeSurface( loadedSurface );
-	}
-
-	return newTexture;
 }
 
 int main( int argc, char* args[] )
@@ -417,9 +394,8 @@ int main( int argc, char* args[] )
 				SDL_RenderClear( gRenderer );
 
                 //Render texture to screen
-				SDL_RenderCopy( gRenderer, gTexture, NULL, NULL );
+				gTexture.render(0,0);
                 //Render objects
-                // !!DOT HAS TO BE RENDERED AFTER TEXTURE!!
 				if (go_to_song_sel){dot.render();}
                 
 				//Update screen

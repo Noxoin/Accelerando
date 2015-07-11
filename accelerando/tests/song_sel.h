@@ -1,6 +1,6 @@
 //Using SDL, SDL image, standard IO, and strings
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL_image.h>
 #include <stdio.h>
 #include <string>
 
@@ -63,6 +63,7 @@ class LTexture
 		int mHeight;
 };
 
+
 //The dot that will move around on the screen
 class Dot
 {
@@ -106,7 +107,7 @@ bool loadMedia();
 void close();
 
 //Loads individual image
-SDL_Texture* loadTexture( std::string path );
+//SDL_Texture* loadTexture( std::string path );
 
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
@@ -115,12 +116,13 @@ SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
 
 //The images that correspond to a keypress
-SDL_Texture* gKeyPressSurfaces[ KEY_PRESS_SURFACE_TOTAL ];
+LTexture gKeyPressSurfaces[ KEY_PRESS_SURFACE_TOTAL ];
 
 //Current displayed texture
-SDL_Texture* gTexture = NULL;
+LTexture gTexture;
 
 //Scene textures
 LTexture gDotTexture;
+
 
 
