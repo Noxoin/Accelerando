@@ -9,9 +9,9 @@ OBJDIR=$(BINDIR)/obj
 
 EXE=accelerando
 
-SOURCES = $(wildcard $(SRCDIR)/*.c)
+SOURCES = $(wildcard $(SRCDIR)/*.cpp)
 HEADERS = $(wildcard $(SRCDIR)/*.h)
-OBJ = $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SOURCES))
+OBJ = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES))
 
 all: build
 
@@ -23,27 +23,28 @@ debug: CFLAGS += -DDEBUG -g
 debug: CFLAG += -DDEBUG -g
 debug: build
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c $(HEADERS)
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS)
 	mkdir -p $(OBJDIR)
 	$(CC) -c -o $@ $< $(CFLAG)
 
-test_midi_reader: $(TESTDIR)/test_midi_reader.c $(OBJDIR)/midi_reader.o
+
+test_%: $(TESTDIR)/test_%.cpp $(OBJDIR)/%.o
 	mkdir -p $(BINDIR)/$(TESTDIR)
 	$(CC) -o $@ $^ $(CFLAGS)
 	./$@
 	rm $@
 
-test_keyboard_UserEvent: $(TESTDIR)/test_keyboard_UserEvent.c $(OBJDIR)/keyboard_poll.o
-	mkdir -p $(BINDIR)/$(TESTDIR)
-	$(CC) -o $@ $^ $(CFLAGS)
-	./$@
-	rm $@
-
-test_gpio: test/test_gpio_map.c $(OBJDIR)/gpio.o
-	mkdir -p $(BINDIR)/$(TESTDIR)
-	$(CC) -o $@ $^ $(CFLAGS)
-	./$@
-	rm $@
+#test_keyboard_UserEvent: $(TESTDIR)/test_keyboard_UserEvent.cpp $(OBJDIR)/keyboard_poll.o
+#	mkdir -p $(BINDIR)/$(TESTDIR)
+#	$(CC) -o $@ $^ $(CFLAGS)
+#	./$@
+#	rm $@
+#
+#test_gpio: $(TESTDIR)/test_gpio_map.cpp $(OBJDIR)/gpio.o
+#	mkdir -p $(BINDIR)/$(TESTDIR)
+#	$(CC) -o $@ $^ $(CFLAGS)
+#	./$@
+#	rm $@
 
 clean:
 	rm -rf $(OBJDIR) $(EXE) $(BINDIR)

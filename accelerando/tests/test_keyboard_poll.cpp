@@ -40,7 +40,8 @@ int main() {
 
     SDL_WM_SetCaption("Event test", NULL);
 */
-    start_keyboard_polling();
+    KeyboardPoll kp;
+    kp.start();
     
     while(!quit) {
         while(SDL_PollEvent(&event) != 0) {
@@ -79,7 +80,7 @@ int main() {
         }
     }
 
-    stop_keyboard_polling();
+    kp.stop();
 
     SDL_DestroyWindow(window);
     SDL_Quit();
