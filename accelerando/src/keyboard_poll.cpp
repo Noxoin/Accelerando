@@ -1,6 +1,8 @@
 #include "keyboard_poll.h"
 #include <SDL2/SDL.h>
 
+#define NUM_THREADS 1
+
 int poll_status = 0;
 int thread_count = 0;
 
@@ -42,11 +44,11 @@ void *polling(void *arg) {
                 e.user.data1 = note;
                 if(buffer[0] == 0) {
                     // Generate SDL_KeyBoardPressed_Event
-                    e.user.code = NOTE_RELEASED;
+                    e.user.code = (int) NOTE_RELEASED;
                     printf("Note released: %02d\n", *note);
                 } else {
                     // Generate SDL_KeyboardReleased Event
-                    e.user.code = NOTE_PRESSED;
+                    e.user.code = (int) NOTE_PRESSED;
                     printf("Note pressed: %02d\n", *note);
                 }
                 SDL_PushEvent(&e);
@@ -60,7 +62,10 @@ void *polling(void *arg) {
     pthread_exit(NULL);
 }
 
-int start_keyboard_polling() {
+KeyboardPoll::KeyboardPoll() {}
+KeyboardPoll::~KeyboardPoll() {}
+
+int KeyboardPoll::start() {
     int rc;
     poll_status = 1;
     if (thread_count == 1) {
@@ -76,18 +81,11 @@ int start_keyboard_polling() {
     return EXIT_SUCCESS;
 }
 
-void stop_keyboard_polling() {
+void KeyboardPoll::stop() {
     poll_status= 0;
     pthread_join(thread_list[0], NULL);
 }
 
 void errormessage(const char *format, ...) {
-/*
-    va_list ap;
-    va_start(ap, format);
-    vfprintf(stderr. format, ap);
-    va_end(ap);
-    putc("\n", stderr);
-    */
     printf("OMFG something went wrong :( in keyboard polling\n");
 }
