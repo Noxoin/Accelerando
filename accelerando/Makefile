@@ -28,7 +28,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS)
 	$(CC) -c -o $@ $< $(CFLAG)
 
 
-test_%: $(TESTDIR)/test_%.cpp $(OBJDIR)/%.o
+test_%: $(TESTDIR)/test_%.cpp $(filter-out $(OBJDIR)/main.o, $(OBJ))
 	mkdir -p $(BINDIR)/$(TESTDIR)
 	$(CC) -o $@ $^ $(CFLAGS)
 	./$@

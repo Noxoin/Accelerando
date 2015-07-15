@@ -1,5 +1,6 @@
 
 enum UserEvent {
     NOTE_PRESSED,
-    NOTE_RELEASED
+    NOTE_RELEASED,
+    TIMER_EVENT
 };

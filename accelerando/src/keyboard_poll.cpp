@@ -1,5 +1,6 @@
 #include "keyboard_poll.h"
 #include <SDL2/SDL.h>
+#include "userEvent.h"
 
 #define NUM_THREADS 1
 
