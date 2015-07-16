@@ -3,12 +3,9 @@
 #include <queue>
 #include <cmath>
 #include "../src/beeper.h"
-
-extern "C" {
 #include <stdlib.h>
 #include <stdio.h>
 #include "../src/midi_reader.h"
-}
 
 int main(int argc, char* argv[])
 {
@@ -24,7 +21,7 @@ int main(int argc, char* argv[])
 	printf("Starting MIDI Reader.....\n");
 
 	Song *song = (Song *) malloc(sizeof(Song));
-	loadMIDI("../res/ABCDEFG.mid", song);
+	loadMIDI("res/ABCDEFG.mid", song);
 
 	for( i = 0; i < song->length; ++i) {
 	//for( i = 0; i < 1; ++i) {
