@@ -2,7 +2,7 @@
 #include <SDL2/SDL_audio.h>
 #include <queue>
 #include <cmath>
-#include "../src/player.h"
+#include "../src/beeper.h"
 
 extern "C" {
 #include <stdlib.h>

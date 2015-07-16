@@ -2,7 +2,7 @@
 #include <SDL2/SDL_audio.h>
 #include <queue>
 #include <cmath>
-#include "player.h"
+#include "beeper.h"
 
 // Amplitude of Sound
 const int AMPLITUDE = 28000;
