@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#define O_WRONLY 01
+//#define O_WRONLY 01
 
 const std::string gpio_map[68] =    { "",     "pg3",  "pb19", "pb18", "pg6",  "pg5",  "pg4",  "pg1",  "pg2",  "pg0", 
                                  "ph14", "ph15", "pi6",  "pi5",  "pi4",  "pg11", "pg10", "pg9",  "pg8",  "pg7",
@@ -20,16 +20,8 @@ const std::string gpio_map[68] =    { "",     "pg3",  "pb19", "pb18", "pg6",  "p
 void setDirection(int gpio, int out) {
     int fd;
     char buf[100];
-    /*
-    char gpio_num[2];
-    itoa(gpio, gpio_num, 10);
-    strcpy(buf, "/sys/class/gpio/gpio");
-    strcat(buf, gpio_num);
-    strcat(buf, "_");
-    strcat(buf, gpio_map[gpio]);
-    strcat(buf, "/direction");
-    */
     sprintf(buf, "/sys/class/gpio/gpio%d_%s/direction", gpio, gpio_map[gpio].c_str());
+    printf("buffer: %s\n", buf);
     fd = open(buf, O_WRONLY);
     if(out) {
         write(fd, "out", 3);
@@ -143,86 +135,87 @@ void allgpio(int fd) {
     write(fd, buf, 100);
 }
 
-Gpio::Gpio() {
+void Gpio::init() {
     int fd;
 
     fd = open("/sys/class/gpio/export", O_WRONLY);
     allgpio(fd);
     close(fd);
 
-    setDirection(CLK, OUT);
-    setDirection(A2, OUT);
-    setDirection(AS2, OUT);
-    setDirection(B2, OUT);
-    setDirection(C3, OUT);
-    setDirection(CS3, OUT);
-    setDirection(D3, OUT);
-    setDirection(DS3, OUT);
-    setDirection(E3, OUT);
-    setDirection(F3, OUT);
-    setDirection(FS3, OUT);
-    setDirection(G3, OUT);
-    setDirection(GS3, OUT);
-    setDirection(A3, OUT);
-    setDirection(AS3, OUT);
-    setDirection(B3, OUT);
-    setDirection(C4, OUT);
-    setDirection(CS4, OUT);
-    setDirection(D4, OUT);
-    setDirection(DS4, OUT);
-    setDirection(E4, OUT);
-    setDirection(F4, OUT);
-    setDirection(FS4, OUT);
-    setDirection(G4, OUT);
-    setDirection(GS4, OUT);
-    setDirection(A4, OUT);
-    setDirection(AS4, OUT);
-    setDirection(B4, OUT);
-    setDirection(C5, OUT);
-    setDirection(CS5, OUT);
-    setDirection(D5, OUT);
-    setDirection(DS5, OUT);
-    setDirection(E5, OUT);
+    setDirection(Gpio::CLK, Gpio::OUT);
+    setDirection(Gpio::A2, Gpio::OUT);
+    setDirection(Gpio::AS2, Gpio::OUT);
+    setDirection(Gpio::B2, Gpio::OUT);
+    setDirection(Gpio::C3, Gpio::OUT);
+    setDirection(Gpio::CS3, Gpio::OUT);
+    setDirection(Gpio::D3, Gpio::OUT);
+    setDirection(Gpio::DS3, Gpio::OUT);
+    setDirection(Gpio::E3, Gpio::OUT);
+    setDirection(Gpio::F3, Gpio::OUT);
+    setDirection(Gpio::FS3, Gpio::OUT);
+    setDirection(Gpio::G3, Gpio::OUT);
+    setDirection(Gpio::GS3, Gpio::OUT);
+    setDirection(Gpio::A3, Gpio::OUT);
+    setDirection(Gpio::AS3, Gpio::OUT);
+    setDirection(Gpio::B3, Gpio::OUT);
+    setDirection(Gpio::C4, Gpio::OUT);
+    setDirection(Gpio::CS4, Gpio::OUT);
+    setDirection(Gpio::D4, Gpio::OUT);
+    setDirection(Gpio::DS4, Gpio::OUT);
+    setDirection(Gpio::E4, Gpio::OUT);
+    setDirection(Gpio::F4, Gpio::OUT);
+    setDirection(Gpio::FS4, Gpio::OUT);
+    setDirection(Gpio::G4, Gpio::OUT);
+    setDirection(Gpio::GS4, Gpio::OUT);
+    setDirection(Gpio::A4, Gpio::OUT);
+    setDirection(Gpio::AS4, Gpio::OUT);
+    setDirection(Gpio::B4, Gpio::OUT);
+    setDirection(Gpio::C5, Gpio::OUT);
+    setDirection(Gpio::CS5, Gpio::OUT);
+    setDirection(Gpio::D5, Gpio::OUT);
+    setDirection(Gpio::DS5, Gpio::OUT);
+    setDirection(Gpio::E5, Gpio::OUT);
 
-    Gpio::setValue(CLK, LOW);
-    Gpio::setValue(A2, LOW);
-    Gpio::setValue(AS2, LOW);
-    Gpio::setValue(B2, LOW);
-    Gpio::setValue(C3, LOW);
-    Gpio::setValue(CS3, LOW);
-    Gpio::setValue(D3, LOW);
-    Gpio::setValue(DS3, LOW);
-    Gpio::setValue(E3, LOW);
-    Gpio::setValue(F3, LOW);
-    Gpio::setValue(FS3, LOW);
-    Gpio::setValue(G3, LOW);
-    Gpio::setValue(GS3, LOW);
-    Gpio::setValue(A3, LOW);
-    Gpio::setValue(AS3, LOW);
-    Gpio::setValue(B3, LOW);
-    Gpio::setValue(C4, LOW);
-    Gpio::setValue(CS4, LOW);
-    Gpio::setValue(D4, LOW);
-    Gpio::setValue(DS4, LOW);
-    Gpio::setValue(E4, LOW);
-    Gpio::setValue(F4, LOW);
-    Gpio::setValue(FS4, LOW);
-    Gpio::setValue(G4, LOW);
-    Gpio::setValue(GS4, LOW);
-    Gpio::setValue(A4, LOW);
-    Gpio::setValue(AS4, LOW);
-    Gpio::setValue(B4, LOW);
-    Gpio::setValue(C5, LOW);
-    Gpio::setValue(CS5, LOW);
-    Gpio::setValue(D5, LOW);
-    Gpio::setValue(DS5, LOW);
-    Gpio::setValue(E5, LOW);
+    Gpio::setValue(Gpio::CLK, Gpio::LOW);
+    Gpio::setValue(Gpio::A2, Gpio::LOW);
+    Gpio::setValue(Gpio::AS2, Gpio::LOW);
+    Gpio::setValue(Gpio::B2, Gpio::LOW);
+    Gpio::setValue(Gpio::C3, Gpio::LOW);
+    Gpio::setValue(Gpio::CS3, Gpio::LOW);
+    Gpio::setValue(Gpio::D3, Gpio::LOW);
+    Gpio::setValue(Gpio::DS3, Gpio::LOW);
+    Gpio::setValue(Gpio::E3, Gpio::LOW);
+    Gpio::setValue(Gpio::F3, Gpio::LOW);
+    Gpio::setValue(Gpio::FS3, Gpio::LOW);
+    Gpio::setValue(Gpio::G3, Gpio::LOW);
+    Gpio::setValue(Gpio::GS3, Gpio::LOW);
+    Gpio::setValue(Gpio::A3, Gpio::LOW);
+    Gpio::setValue(Gpio::AS3, Gpio::LOW);
+    Gpio::setValue(Gpio::B3, Gpio::LOW);
+    Gpio::setValue(Gpio::C4, Gpio::LOW);
+    Gpio::setValue(Gpio::CS4, Gpio::LOW);
+    Gpio::setValue(Gpio::D4, Gpio::LOW);
+    Gpio::setValue(Gpio::DS4, Gpio::LOW);
+    Gpio::setValue(Gpio::E4, Gpio::LOW);
+    Gpio::setValue(Gpio::F4, Gpio::LOW);
+    Gpio::setValue(Gpio::FS4, Gpio::LOW);
+    Gpio::setValue(Gpio::G4, Gpio::LOW);
+    Gpio::setValue(Gpio::GS4, Gpio::LOW);
+    Gpio::setValue(Gpio::A4, Gpio::LOW);
+    Gpio::setValue(Gpio::AS4, Gpio::LOW);
+    Gpio::setValue(Gpio::B4, Gpio::LOW);
+    Gpio::setValue(Gpio::C5, Gpio::LOW);
+    Gpio::setValue(Gpio::CS5, Gpio::LOW);
+    Gpio::setValue(Gpio::D5, Gpio::LOW);
+    Gpio::setValue(Gpio::DS5, Gpio::LOW);
+    Gpio::setValue(Gpio::E5, Gpio::LOW);
 }
 
 void Gpio::setValue(int gpio, int value) {
     int fd;
     char buf[100];
     sprintf(buf, "/sys/class/gpio/gpio%d_%s/value", gpio, gpio_map[gpio].c_str());
+    printf("Buffer: %s, Value: %d\n", buf, value);
     fd = open(buf, O_WRONLY);
     if(value) {
         write(fd, "1", 1);
@@ -232,7 +225,7 @@ void Gpio::setValue(int gpio, int value) {
     close(fd);
 }
 
-Gpio::~Gpio() {
+void Gpio::clean() {
     int fd;
 
     fd = open("/sys/class/gpio/unexport", O_WRONLY);

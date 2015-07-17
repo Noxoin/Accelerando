@@ -1,5 +1,5 @@
 #include "timer.h"
-#include "userEvent.h"
+#include "user_event.h"
 
 Uint32 timerCallback(Uint32 interval, void *params) {
     SDL_Event event;

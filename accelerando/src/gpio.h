@@ -53,9 +53,11 @@ class Gpio {
         const static int EF5 = 60;
         const static int E5 = 63;
 
-        Gpio();
-        ~Gpio();
-        void setValue(int gpio, int value);
-        int getPin(int midiNote);
+        //Gpio();
+        //~Gpio();
+        static void init();
+        static void setValue(int gpio, int value);
+        static int getPin(int midiNote);
+        static void clean();
 };
 

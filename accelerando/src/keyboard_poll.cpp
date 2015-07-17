@@ -1,6 +1,6 @@
 #include "keyboard_poll.h"
 #include <SDL2/SDL.h>
-#include "userEvent.h"
+#include "user_event.h"
 
 #define NUM_THREADS 1
 
@@ -46,11 +46,11 @@ void *polling(void *arg) {
                 if(buffer[0] == 0) {
                     // Generate SDL_KeyBoardPressed_Event
                     e.user.code = (int) NOTE_RELEASED;
-                    printf("Note released: %02d\n", *note);
+                    //printf("Note released: %02d\n", *note);
                 } else {
                     // Generate SDL_KeyboardReleased Event
                     e.user.code = (int) NOTE_PRESSED;
-                    printf("Note pressed: %02d\n", *note);
+                    //printf("Note pressed: %02d\n", *note);
                 }
                 SDL_PushEvent(&e);
             }

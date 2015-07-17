@@ -1,7 +1,10 @@
 #include "../src/keyboard_poll.h"
-#include "../src/user_event.h"
 #include <SDL2/SDL.h>
+#include <string.h>
 #include <stdio.h>
+#include "../src/timer.h"
+#include "../src/user_event.h"
+#include "../src/song_player.h"
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
@@ -31,21 +34,21 @@ int main() {
 
     SDL_UpdateWindowSurface(window);
 
-/*
-    screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE);
+    SongPlayer sp("res/demo1.mid");
+    
+    int ms = 7500/sp.getTempo();
 
-    if(screen == null) {
-        printf("Failed to produce a screen\n");
-        exit(1);
-    }
+    printf("Tempo is %dbpm (%d ms)\n", sp.getTempo(), ms);
 
-    SDL_WM_SetCaption("Event test", NULL);
-*/
     KeyboardPoll kp;
     kp.start();
+
+    Timer timer;
+
+    int count = 0;
+    timer.start(ms);
     
-    int hello;
-    while(!quit) {
+    while(!quit && !sp.finished) {
         while(SDL_PollEvent(&event) != 0) {
             switch(event.type) {
                 case SDL_QUIT:
@@ -54,9 +57,11 @@ int main() {
                 case SDL_KEYDOWN:
                     switch(event.key.keysym.sym) {
                         case SDLK_UP:
+                            timer.start(ms);
                             printf("You pressed the up arrow!!\n");
                             break;
                         case SDLK_DOWN:
+                            timer.stop();
                             printf("You pressed the down arrow!!\n");
                             break;
                         case SDLK_LEFT:
@@ -70,12 +75,15 @@ int main() {
                 case SDL_USEREVENT:
                     switch(event.user.code) {
                         case NOTE_PRESSED:
-                            hello = *(unsigned char *) event.user.data1;
-                            printf("Piano Key %d was pressed\n", *(unsigned char *)event.user.data1);
-                            printf("Piano Key %d was pressed\n", hello);
+                            sp.notePressedHandler(event);
+                            //printf("Piano Key %d was pressed\n", *(unsigned char *)event.user.data1);
                             break;
                         case NOTE_RELEASED:
-                            printf("Piano Key %d was released\n", *(unsigned char *)event.user.data1);
+                            //printf("Piano Key %d was released\n", *(unsigned char *)event.user.data1);
+                            break;
+                        case TIMER_EVENT:
+                            //printf("Time: %02ds\n", ++count);
+                            sp.timerHandler();
                             break;
                     }
                     free(event.user.data1);
@@ -84,6 +92,11 @@ int main() {
         }
     }
 
+    int results[4];
+    sp.getResults(results);
+    printf("Perfect: %d, Good: %d, Ok: %d, Miss: %d\n", results[0], results[1], results[2], results[3]);
+
+    timer.stop();
     kp.stop();
 
     SDL_DestroyWindow(window);
