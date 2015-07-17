@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-I. -lm -lasound -lSDL2 -lpthread
+CFLAGS=-I. -lm -lasound -lSDL2 -lSDL2_image -lpthread
 CFLAG=-I.
 BUILDDIR=build
 SRCDIR=src
