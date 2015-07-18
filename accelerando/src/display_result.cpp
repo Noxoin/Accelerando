@@ -7,15 +7,15 @@ string toString(int intValue){
     return str;
 }
 
-string* calculateResult(int idealHits, double *intScore){
-        double idealScore;
+string* calculateResult(int idealHits, int *intScore){
+        int idealScore;
         double accuracy;
         string *strScore;
         strScore = new string[SCORE_LEVELS];
 
         idealScore = 300*idealHits;
         intScore[TOTAL] = 300*intScore[PERFECT]+100*intScore[GOOD] +50*intScore[BAD];
-        accuracy = (intScore[TOTAL]/idealScore)*100;
+        accuracy = (double)intScore[TOTAL]/idealScore*100;
         //convert from int to string
         strScore[PERFECT] = "Perfect = 300 points x "+toString(intScore[PERFECT]);
         strScore[GOOD] = "Good = 100 points x "+toString(intScore[GOOD]);

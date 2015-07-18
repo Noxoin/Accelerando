@@ -12,7 +12,7 @@ int main( )
     LTexture gScore[SCORE_LEVELS];
     //Variables storing results
     int idealHits;
-    double intScore[SCORE_LEVELS];
+    int intScore[SCORE_LEVELS];
     string *strScore = new string[SCORE_LEVELS];
     
     //test data
@@ -69,7 +69,7 @@ int main( )
     
     //load media
     //Open the font
-	gFont = TTF_OpenFont( "res/fonts/font1.ttf", 50 );
+    gFont = TTF_OpenFont( "res/fonts/font1.ttf", 50 );
     loadMedia(gScore, strScore);
     
     bool quit = false;

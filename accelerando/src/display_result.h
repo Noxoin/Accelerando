@@ -9,9 +9,9 @@ using namespace std;
 
 enum score
 {
-	PERFECT,
-	GOOD,
-	BAD,
+    PERFECT,
+    GOOD,
+    BAD,
     MISS,
     TOTAL,
     ACCURACY,
@@ -23,7 +23,7 @@ enum score
 string toString(int intValue);
 
 //calculate result and return string
-string* calculateResult(int idealHits, double *intScore);
+string* calculateResult(int idealHits, int *intScore);
 
 //load text texture
 void loadMedia(LTexture *gScore, string *strScore);
