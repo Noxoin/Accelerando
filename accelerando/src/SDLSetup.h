@@ -7,6 +7,7 @@
 #include <string>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 
 
@@ -35,5 +36,8 @@ extern SDL_Window* gWindow;// = NULL;
 
 //The window renderer
 extern SDL_Renderer* gRenderer;// = NULL;
+
+//Globally used font
+extern TTF_Font *gFont;
 
 #endif

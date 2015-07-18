@@ -18,6 +18,9 @@ class LTexture
 
 		//Loads image at specified path
 		bool loadFromFile( std::string path );
+        
+		//Creates image from font string
+		bool loadFromRenderedText( std::string textureText, SDL_Color textColor );
 
 		//Deallocates texture
 		void free();
