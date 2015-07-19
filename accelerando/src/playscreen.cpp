@@ -37,7 +37,7 @@ bool loadMedia(SDL_Surface* gScreenSurface)
 	bool success = true;	
 
 	//Load symbol surface
-	gSymbolsSurface = loadSurface( "../res/symbols.bmp" , gScreenSurface);
+	gSymbolsSurface = loadSurface( "../res/symbolsMap.bmp" , gScreenSurface);
 	if( gSymbolsSurface == NULL )
 	{
 		printf( "Failed to load symbols image!\n" );
