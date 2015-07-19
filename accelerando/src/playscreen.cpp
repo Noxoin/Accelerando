@@ -13,7 +13,7 @@ extern "C" {
 const int bar_Height = 80;
 const int song_MaxWidth = 10000;
 
-const int bitMapCellW = 50;
+const int bitMapCellW = 75;
 const int bitMapCellH = 125;
 
 SDL_Rect copy;
@@ -134,17 +134,23 @@ SDL_Surface* CreateBlitingSurface (Song* song, SDL_Surface* gBlitingSurface)
 	SDL_FillRect(gBlitingSurface,NULL, SDL_MapRGB (gBlitingSurface->format, 255,255,255));;
 
 	//Apply clef onto bliting background surface
-	CopySymbolCellToSurface(3,1,0,SCREEN_HEIGHT/2 - bitMapCellH/2 + SCREEN_HEIGHT,gBlitingSurface);
+	copy.x = 0;
+	copy.y = 2*bitMapCellH;
+	copy.w = bitMapCellW;
+	copy.h = 2*bitMapCellH;
+
+	paste.x = 0;
+	paste.y = SCREEN_HEIGHT/2-bitMapCellH+SCREEN_HEIGHT;
+	paste.w = bitMapCellW;
+	paste.h = 2*bitMapCellH;
+
+	SDL_BlitSurface( gSymbolsSurface, &copy, gBlitingSurface, &paste );
 
 	//Apply time sig onto bliting background surface
-	CopySymbolCellToSurface(4, song->bars[0].tsig_numerator, bitMapCellW, SCREEN_HEIGHT/2-bitMapCellH/2+SCREEN_HEIGHT, gBlitingSurface);
-	CopySymbolCellToSurface(4, song->bars[0].tsig_denominator, bitMapCellW, SCREEN_HEIGHT/2+SCREEN_HEIGHT, gBlitingSurface);
+	CopySymbolCellToSurface(5, song->bars[0].tsig_numerator, bitMapCellW, SCREEN_HEIGHT/2-bitMapCellH/2+SCREEN_HEIGHT, gBlitingSurface);
+	CopySymbolCellToSurface(5, song->bars[0].tsig_denominator, bitMapCellW, SCREEN_HEIGHT/2+SCREEN_HEIGHT, gBlitingSurface);
 
 	//Apply key sig onto bliting background surface (TODO)
-
-	//Apply stubs to onto bliting background surface
-	CopySymbolCellToSurface(6,1, 4*bitMapCellW, 2*SCREEN_HEIGHT - bitMapCellH, gBlitingSurface);
-	CopySymbolCellToSurface(6,2, 4*bitMapCellW, SCREEN_HEIGHT, gBlitingSurface);
 
 	//Apply notes onto bliting play surface
 	for (int bar = 0; bar < song->length; bar++)
@@ -260,7 +266,7 @@ void UpdatePlaySurface (SDL_Surface* gScreenSurface, SDL_Surface* gBlitingSurfac
 	SDL_BlitSurface( gBlitingSurface, &copy, gScreenSurface, &paste );
 
 	//Draw the line marking where the guy is supposed to hit
-	draw.x = 4.5*bitMapCellW;
+	draw.x = 3.5*bitMapCellW;
 	draw.y = 0;
 	draw.w = 3;
 	draw.h = SCREEN_HEIGHT;
