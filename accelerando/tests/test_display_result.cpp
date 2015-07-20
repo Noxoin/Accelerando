@@ -1,20 +1,18 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string>
 #include "../src/display_result.h"
 
 using namespace std;
 
-
 int main( )
 {
-    //Rendered texture
-    LTexture gScore[SCORE_LEVELS];
+    //Main loop flag
+    bool quit = false;
     //Variables storing results
     int idealHits;
     int intScore[SCORE_LEVELS];
     string *strScore = new string[SCORE_LEVELS];
-    
+    //Rendered texture
+    LTexture gScore[SCORE_LEVELS];
+
     //test data
     idealHits = 100;
     intScore[PERFECT] = 85;
@@ -22,9 +20,17 @@ int main( )
     intScore[BAD] = 8;
     intScore[MISS] = 2;
     
-    //calculate result and return string
+    //Event handler
+    SDL_Event e;
+    
+    //Calculate result and return string
     strScore = calculateResult(idealHits, intScore);
 
+    
+    
+    //======================
+    //===== Initialize =====
+    //======================
     //Start up SDL and create window
 	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
@@ -63,19 +69,24 @@ int main( )
 				{
 					printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
 				}
+                //Open the font
+                gFont = TTF_OpenFont( "res/fonts/font1.ttf", 50 );
 			}
 		}
 	}
+
     
-    //load media
-    //Open the font
-    gFont = TTF_OpenFont( "res/fonts/font1.ttf", 50 );
+    
+    //======================
+    //===== Load Media =====
+    //=====================
     loadMedia(gScore, strScore);
+
     
-    bool quit = false;
-
-    SDL_Event e;
-
+    
+    //=====================
+    //======== Run ========
+    //=====================
     while( !quit )
     {
         while( SDL_PollEvent( &e ) != 0 )
@@ -102,14 +113,20 @@ int main( )
         SDL_RenderPresent( gRenderer );
     }
     
-    //close
+    
+    
+    //=====================
+    //======= Close =======
+    //=====================
     //Free loaded images
 	for( int i = 0; i <=SCORE_LEVELS; ++i ){
 		gScore[ i ].free();
-	}   
+	}
+    
 	//Free global font
 	TTF_CloseFont( gFont );
-	gFont = NULL;    
+	gFont = NULL;
+    
     //Destroy window	
 	SDL_DestroyRenderer( gRenderer );
 	SDL_DestroyWindow( gWindow );
@@ -123,6 +140,3 @@ int main( )
     
 	return 0;
 }
-
-
-
