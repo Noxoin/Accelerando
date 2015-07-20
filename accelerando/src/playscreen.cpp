@@ -1,8 +1,6 @@
-extern "C" {
 #include <stdlib.h>
 #include <stdio.h>
 #include "../src/midi_reader.h"
-}
 
 #include <SDL2/SDL.h>
 #include <stdio.h>
@@ -37,7 +35,7 @@ bool loadMedia(SDL_Surface* gScreenSurface)
 	bool success = true;	
 
 	//Load symbol surface
-	gSymbolsSurface = loadSurface( "../res/symbolsMap.bmp" , gScreenSurface);
+	gSymbolsSurface = loadSurface( "res/symbolsMap.bmp" , gScreenSurface);
 	if( gSymbolsSurface == NULL )
 	{
 		printf( "Failed to load symbols image!\n" );

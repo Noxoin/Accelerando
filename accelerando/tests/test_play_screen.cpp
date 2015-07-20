@@ -2,11 +2,9 @@
 and may not be redistributed without written permission.*/
 
 //Using SDL, standard IO, and strings
-extern "C" {
 #include <stdlib.h>
 #include <stdio.h>
 #include "../src/midi_reader.h"
-}
 
 
 #include <SDL2/SDL.h>
@@ -19,7 +17,7 @@ int main( int argc, char* args[] )
 {
 	Song *song = (Song *) malloc(sizeof(Song));
 
-	loadMIDI("../res/TestMusicLv1C+_arpeggios_hs_8n.mid", song);
+	loadMIDI("res/TestMusicLv1C+_arpeggios_hs_8n.mid", song);
 
 //=======================================================================================================================
 
