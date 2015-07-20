@@ -10,9 +10,9 @@ int main() {
     for(int i = 0; i < 5; ++i) {
         Gpio::setValue(Gpio::CLK, Gpio::HIGH);
         //sleep(10);
-        usleep(10000);
+        usleep(500000);
         Gpio::setValue(Gpio::CLK, Gpio::LOW);
-        usleep(10000);
+        usleep(500000);
     }
     return 0;
 }

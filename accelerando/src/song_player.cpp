@@ -31,9 +31,9 @@ void SongPlayer::notePressedHandler(SDL_Event e) {
     for(int i = 0; i < bar.length; ++i) {
         Note note = bar.notes[i];
         if(currNoteIndex == note.time && note.value == *(unsigned char*) e.user.data1) {
-            printf("YAY!!! Pressed Key %d correctly! Bar: %d; Note:%d\n", *(unsigned char*) e.user.data1, currBarIndex, currNoteIndex);
+            printf("YAY!!! Pressed Key %d correctly! Bar: %d; Note:%d; Tick_mod:%d\n", *(unsigned char*) e.user.data1, currBarIndex, currNoteIndex, tick_mod);
             // Record results
-            if(tick_mod < 2 && tick_mod > 6) {
+            if(tick_mod < 2 || tick_mod > 6) {
                 //PERFECT!!;
                 results[0]++;
             } else if (tick_mod == 4) {
@@ -56,10 +56,10 @@ void SongPlayer::timerHandler() {
     tick_mod = (tick_mod+1) % 8;
     //printf("tick_mod: %d\t", tick_mod);
     if(tick_mod % 2 == 0) {
-        printf("set HIGH\t");
+        //printf("set HIGH\t");
         Gpio::setValue(Gpio::CLK, Gpio::HIGH);
     } else {
-        printf("set LOW\t");
+        //printf("set LOW\t");
         Gpio::setValue(Gpio::CLK, Gpio::LOW);
     }
 
@@ -69,7 +69,7 @@ void SongPlayer::timerHandler() {
             total_notes += song->bars[++currBarIndex].length;
         }
         // Check Missed notes here
-    } else if (tick_mod == 0) {
+    } else if (tick_mod == 5) {
         //playing note
         //printf("Playing note at bar: %d, note: %d\n", currBarIndex, currNoteIndex);
         Bar bar = song->bars[currBarIndex];

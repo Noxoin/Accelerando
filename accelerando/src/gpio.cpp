@@ -21,7 +21,7 @@ void setDirection(int gpio, int out) {
     int fd;
     char buf[100];
     sprintf(buf, "/sys/class/gpio/gpio%d_%s/direction", gpio, gpio_map[gpio].c_str());
-    printf("buffer: %s\n", buf);
+    //printf("buffer: %s\n", buf);
     fd = open(buf, O_WRONLY);
     if(out) {
         write(fd, "out", 3);
@@ -215,7 +215,7 @@ void Gpio::setValue(int gpio, int value) {
     int fd;
     char buf[100];
     sprintf(buf, "/sys/class/gpio/gpio%d_%s/value", gpio, gpio_map[gpio].c_str());
-    printf("Buffer: %s, Value: %d\n", buf, value);
+    //printf("Buffer: %s, Value: %d\n", buf, value);
     fd = open(buf, O_WRONLY);
     if(value) {
         write(fd, "1", 1);

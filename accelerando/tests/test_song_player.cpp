@@ -34,7 +34,7 @@ int main() {
 
     SDL_UpdateWindowSurface(window);
 
-    SongPlayer sp("res/demo1.mid");
+    SongPlayer sp("res/ABCDEFG.mid");
     
     int ms = 7500/sp.getTempo();
 
