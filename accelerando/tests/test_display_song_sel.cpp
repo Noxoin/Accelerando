@@ -74,7 +74,7 @@ int main()
 				{
 					printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
 				}
-                gFont = TTF_OpenFont( "res/fonts/font1.ttf", 45 );
+                gFont = TTF_OpenFont( "res/fonts/font1.ttf", 27 );
 			}
 		}
 	}

@@ -14,20 +14,20 @@
 
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 1067;
-const int SCREEN_HEIGHT = 600;
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
 
 
 //Maximum axis velocity of the dot
-const double DOT_VEL = 90;
+const double DOT_VEL = 70;
 //Initial status of the dot
-const double INITIAL_POS_X = 950;
-const double INITIAL_POS_Y = 10;
+const double INITIAL_POS_X = 580;
+const double INITIAL_POS_Y = 5;
 const double INITIAL_VEL = 0;
 //Final status of the dot
-const double FINAL_POS_Y = 460;
+const double FINAL_POS_Y = 355;
 //Max distance in one press
-const double MAX_DISTANCE = 90;
+const double MAX_DISTANCE = 70;
 //Dot dimension constants
 //const int DOT_WIDTH = 72;
 //const int DOT_HEIGHT = 97;
