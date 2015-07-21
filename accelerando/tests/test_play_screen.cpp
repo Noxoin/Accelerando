@@ -1,11 +1,6 @@
-/*This source code copyrighted by Lazy Foo' Productions (2004-2015)
-and may not be redistributed without written permission.*/
-
 //Using SDL, standard IO, and strings
 #include <stdlib.h>
 #include <stdio.h>
-#include "../src/midi_reader.h"
-
 
 #include <SDL2/SDL.h>
 #include <stdio.h>
@@ -17,7 +12,7 @@ int main( int argc, char* args[] )
 {
 	Song *song = (Song *) malloc(sizeof(Song));
 
-	loadMIDI("res/TestMusicLv1C+_arpeggios_hs_8n.mid", song);
+	loadMIDI("res/songs/demo1.mid", song);
 
 //=======================================================================================================================
 
@@ -52,19 +47,23 @@ int main( int argc, char* args[] )
 		//Get window surface
 		gWindowSurface = SDL_GetWindowSurface( gWindow );
 
+                if(gWindowSurface == NULL) {
+                    printf("WTF\n");
+                    exit(1);
+                }
+
+                Image image(gWindowSurface);
+
 		//Main loop flag
 		printf( "\n Finished Getting Window Surface");
 		bool quit = false;
 		SDL_Event e;
 		
-		printf( "\n Loading Media");
-		loadMedia(gWindowSurface);
-		
 		printf( "\n Preparing to Blit");
-		gBlitingSurface = CreateBlitingSurface(song, gBlitingSurface);
+		gBlitingSurface = createBlitingSurface(image, song, gBlitingSurface);
 
 		printf( "\n Setting Background");
-		SetPlayscreenBackground (gWindowSurface, gBlitingSurface);
+		setPlayscreenBackground (gWindowSurface, gBlitingSurface);
 
 		while( !quit )
 		{
@@ -76,16 +75,16 @@ int main( int argc, char* args[] )
 					quit = true;
 				}
 			}
-			UpdatePlaySurface( gWindowSurface,gBlitingSurface, xCoord);
+			updatePlaySurface( gWindowSurface,gBlitingSurface, xCoord);
 
 			SDL_UpdateWindowSurface( gWindow );
 			SDL_Delay(50);
 			xCoord = xCoord + 10;
 		}
+                //delete image;
 	}
 
 	//Free resources and close SDL
-	close();
 
 	//Destroy window
 	SDL_DestroyWindow( gWindow );

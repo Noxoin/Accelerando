@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 	printf("Starting MIDI Reader.....\n");
 
 	Song *song = (Song *) malloc(sizeof(Song));
-	loadMIDI("res/demo1.mid", song);
+	loadMIDI("res/songs/demo1.mid", song);
 
 	for( i = 0; i < song->length; ++i) {
 	//for( i = 0; i < 1; ++i) {

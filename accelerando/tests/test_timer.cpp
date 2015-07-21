@@ -46,7 +46,7 @@ int main() {
 */
 
     Song *song = (Song *) malloc(sizeof(Song));
-    loadMIDI("res/ABCDEFG.mid", song);
+    loadMIDI("res/songs/ABCDEFG.mid", song);
     
     int tempo = ((60000/song->bars[0].tempo + 2)/4) * 4;
 

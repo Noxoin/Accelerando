@@ -30,11 +30,12 @@ int main() {
         
     screen = SDL_GetWindowSurface(window);
 
-    SDL_FillRect( screen, NULL, SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF));
+    Image image(screen);
 
-    SDL_UpdateWindowSurface(window);
+    //SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF));
 
-    SongPlayer sp("res/ABCDEFG.mid");
+
+    SongPlayer sp("res/songs/demo1.mid", image);
     
     int ms = 7500/sp.getTempo();
 
@@ -42,6 +43,9 @@ int main() {
 
     KeyboardPoll kp;
     kp.start();
+
+    sp.setPlayscreenBackground(image, screen);
+    SDL_UpdateWindowSurface(window);
 
     Timer timer;
 
@@ -83,7 +87,8 @@ int main() {
                             break;
                         case TIMER_EVENT:
                             //printf("Time: %02ds\n", ++count);
-                            sp.timerHandler();
+                            sp.timerHandler(screen);
+                            SDL_UpdateWindowSurface(window);
                             break;
                     }
                     free(event.user.data1);

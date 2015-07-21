@@ -7,7 +7,7 @@ int main() {
     printf("Starting Test MIDI Reader.....\n");
     
     Song *song = (Song *) malloc(sizeof(Song));
-    loadMIDI("res/ABCDEFG.mid", song);
+    loadMIDI("res/songs/ABCDEFG.mid", song);
     printf("Song name: ");
     for(i = 0; i < song->name_length; ++i) {
         printf("%c", song->name[i]);
@@ -29,7 +29,7 @@ int main() {
 
     song = (Song *) malloc(sizeof(Song));
 
-    loadMIDI("res/TestMusicLv1C+_arpeggios_hs_8n.mid", song);
+    loadMIDI("res/songs/TestMusicLv1C+_arpeggios_hs_8n.mid", song);
     printf("Song name: ");
     for(i = 0; i < song->name_length; ++i) {
         printf("%c", song->name[i]);
