@@ -14,7 +14,6 @@ class SongPlayer {
         int currBarIndex;
         Bar currBar;
         int currNoteIndex;
-        int total_notes;
         int results[4]; //0 = Perfect, 1 = Good, 2 = Satisfactory; 3 = misses (calculated at the end
         
         // Rendering
@@ -28,6 +27,7 @@ class SongPlayer {
         SongPlayer(std::string filename, Image image);
         ~SongPlayer();
         bool finished;
+        int total_notes;
         int getTempo();
         void getResults(int (&s)[4]);
         //void getResults(int &excellent, int &good, int &sat, int *miss);

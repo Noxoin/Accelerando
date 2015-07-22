@@ -84,7 +84,7 @@ int main()
     //======================
     //===== Load Media =====
     //======================
-    loadMedia(gKeyPressSurfaces, gDotTexture, gSongName);
+    loadSelectScreenMedia(gKeyPressSurfaces, gDotTexture, gSongName);
 
 
     

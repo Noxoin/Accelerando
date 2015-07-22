@@ -103,18 +103,17 @@ void SongPlayer::timerHandler(SDL_Surface* gScreenSurface) {
             light_bar = 0;
         }
         if(light_bar != song->length && light_bar > -1) {
-            //printf("Turning on light_bar: %d, light_note:%d at currNote %d\n", light_bar, light_note, currNoteIndex);
             Bar bar = song->bars[light_bar];
             for(int i = 0; i < bar.length; ++i) {
                 Note note = bar.notes[i];
                 if(light_note == note.time) {
-                    printf("ON: light_note: %d; note.time: %d; duration: %d\n", light_note, note.time, note.duration);
+                    printf("ON: light_note: %d; note.time: %d; duration: %d; note: %d; bar:%d\n", light_note, note.time, note.duration, currNoteIndex, currBarIndex);
                     Gpio::setValue(Gpio::getPin(note.value), Gpio::HIGH);
                 }
             }
         }
     } else if (tick_mod == 5) {
-        int light_note = currNoteIndex + 1;
+        int light_note = currNoteIndex + 2;
         int light_bar = currBarIndex;
         if(light_note > 7) {
             light_note %= 8;
@@ -122,13 +121,12 @@ void SongPlayer::timerHandler(SDL_Surface* gScreenSurface) {
         } else if (light_note > -1 && light_bar < 0 ) {
             light_bar = 0;
         }
-        if((light_bar != song->length && light_bar > -1) || (light_bar == song->length && light_bar == 0)) {
-            //printf("Turning off light_bar: %d, light_note:%d at currNote %d\n", light_bar, light_note, currNoteIndex);
+        if((light_bar != song->length && light_bar > -1) || (light_bar == song->length && light_note == 0)) {
             if(light_note == 0 && light_bar > 0) {
                 Bar bar = song->bars[light_bar-1];
                 for(int i = 0; i < bar.length; ++i) {
                     Note note = bar.notes[i];
-                    if(8 == note.time+note.duration-1) {
+                    if(8 == note.time+note.duration) {
                         printf("OFF: light_note: 8; note.time: %d; duration: %d\n", note.time, note.duration);
                         Gpio::setValue(Gpio::getPin(note.value), Gpio::LOW);
                     }
@@ -137,14 +135,17 @@ void SongPlayer::timerHandler(SDL_Surface* gScreenSurface) {
                 Bar bar = song->bars[light_bar];
                 for(int i = 0; i < bar.length; ++i) {
                     Note note = bar.notes[i];
-                    if(light_note == note.time+note.duration-1) {
+                    if(light_note == note.time+note.duration) {
                         printf("OFF: light_note: %d; note.time: %d; duration: %d\n", light_note, note.time, note.duration);
                         Gpio::setValue(Gpio::getPin(note.value), Gpio::LOW);
                     }
                 }
             }
         }
-    } else if (currBarIndex == song->length) {
+    } 
+    
+    //if (currBarIndex == song->length && currNoteIndex == 2) {
+    if (currBarIndex == song->length){
         printf("End of Song\n");
         finished = true;
         total_notes += song->bars[currBarIndex].length;

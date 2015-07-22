@@ -20,7 +20,7 @@ class Dot
 		void move();
 
 		//Shows the dot on the screen
-		void render(LTexture& gDotTexture);
+		void render(SDL_Renderer *renderer, LTexture& gDotTexture);
 
     private:
 		//The X and Y offsets of the dot

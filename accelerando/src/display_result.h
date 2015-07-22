@@ -26,7 +26,7 @@ string toString(int intValue);
 string* calculateResult(int idealHits, int *intScore);
 
 //load text texture
-void loadMedia(LTexture *gScore, string *strScore);
+void loadResultsMedia(SDL_Renderer *renderer, LTexture *gScore, string *strScore, TTF_Font *font);
 
 
 #endif

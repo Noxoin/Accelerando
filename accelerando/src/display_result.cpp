@@ -41,41 +41,42 @@ string* calculateResult(int idealHits, int *intScore){
 }
 
 
-void loadMedia(LTexture *gScore, string *strScore){
-	if( gFont == NULL )
+void loadResultsMedia(SDL_Renderer *renderer, LTexture *gScore, string *strScore, TTF_Font *font){
+	if( font == NULL )
 	{
 		printf( "Failed to load the font! SDL_ttf Error: %s\n", TTF_GetError() );
 	}
 	else
 	{
 		SDL_Color textColor = { 0, 0, 0 };
-		if( !gScore[PERFECT].loadFromRenderedText( strScore[PERFECT], textColor ) )
+		if( !gScore[PERFECT].loadFromRenderedText( renderer, font, strScore[PERFECT], textColor ) )
 		{
 			printf( "Failed to render text texture!\n" );
 		}
-        if( !gScore[GOOD].loadFromRenderedText(strScore[GOOD], textColor ) )
+        if( !gScore[GOOD].loadFromRenderedText(renderer, font, strScore[GOOD], textColor ) )
 		{
 			printf( "Failed to render text texture!\n" );
 		}
-        if( !gScore[BAD].loadFromRenderedText( strScore[BAD], textColor ) )
+        if( !gScore[BAD].loadFromRenderedText(renderer, font, strScore[BAD], textColor ) )
 		{
 			printf( "Failed to render text texture!\n" );
 		}
-        if( !gScore[MISS].loadFromRenderedText( strScore[MISS], textColor ) )
+        if( !gScore[MISS].loadFromRenderedText(renderer, font, strScore[MISS], textColor ) )
 		{
 			printf( "Failed to render text texture!\n" );
 		}
-        if( !gScore[TOTAL].loadFromRenderedText( strScore[TOTAL], textColor ) )
+        if( !gScore[TOTAL].loadFromRenderedText(renderer, font, strScore[TOTAL], textColor ) )
 		{
 			printf( "Failed to render text texture!\n" );
 		}
-        if( !gScore[ACCURACY].loadFromRenderedText( strScore[ACCURACY], textColor ) )
+        if( !gScore[ACCURACY].loadFromRenderedText(renderer, font, strScore[ACCURACY], textColor ) )
 		{
 			printf( "Failed to render text texture!\n" );
 		}
-        if( !gScore[RANK].loadFromRenderedText( strScore[RANK], textColor ) )
+        if( !gScore[RANK].loadFromRenderedText(renderer, font, strScore[RANK], textColor ) )
 		{
 			printf( "Failed to render text texture!\n" );
 		}
 	}
 }
+

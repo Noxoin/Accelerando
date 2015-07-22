@@ -14,8 +14,8 @@
 
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+//const int SCREEN_WIDTH = 640;
+//const int SCREEN_HEIGHT = 480;
 
 
 //Maximum axis velocity of the dot
@@ -34,14 +34,5 @@ const double MAX_DISTANCE = 70;
 
 const int SONGS_PER_PAGE = 6;
 
-
-//The window we'll be rendering to
-extern SDL_Window* gWindow;// = NULL;
-
-//The window renderer
-extern SDL_Renderer* gRenderer;// = NULL;
-
-//Globally used font
-extern TTF_Font *gFont;
-
 #endif
+

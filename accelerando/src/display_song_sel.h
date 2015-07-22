@@ -3,6 +3,9 @@
 
 #include "LTexture.h"
 #include "Dot.h"
+#include <SDL2/SDL_ttf.h>
+
+using namespace std;
 
 //Key press surfaces constants
 enum KeyPressSurfaces
@@ -20,6 +23,9 @@ enum DotTexture
 
 int readFileNames();
 
-void loadMedia(LTexture *gKeyPressSurfaces, LTexture *gDotTexture, LTexture *gSongName);
+void loadSelectScreenMedia(SDL_Renderer *renderer, TTF_Font *font, LTexture *gKeyPressSurfaces, LTexture *gDotTexture, LTexture *gSongName);
+
+vector<string> getFileNames();
 
 #endif
+

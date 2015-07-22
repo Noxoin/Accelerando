@@ -59,5 +59,6 @@ class Gpio {
         static void setValue(int gpio, int value);
         static int getPin(int midiNote);
         static void clean();
+        static void reset();
 };
 
