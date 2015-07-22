@@ -74,7 +74,7 @@ int main()
 				{
 					printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
 				}
-                gFont = TTF_OpenFont( "res/fonts/font1.ttf", 27 );
+                                gFont = TTF_OpenFont( "res/fonts/font1.ttf", 27 );
 			}
 		}
 	}
@@ -93,6 +93,9 @@ int main()
     //=====================
     //Set default current surface
     gTexture = gKeyPressSurfaces[ KEY_PRESS_SURFACE_DEFAULT ];
+    gTexture.render(0,0);
+    bool old_state = go_to_song_sel;
+    int old_addPage = addPage;
     
     //While application is running
     while( !quit ){
@@ -125,16 +128,30 @@ int main()
         if (go_to_song_sel){dot.move();}
 
         //Clear screen
+        /*
         SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
         SDL_RenderClear( gRenderer );
+        */
 
         //Render background texture to screen
-        gTexture.render(0,0);
         //Render objects
         if (go_to_song_sel){
-            for(int i = 0; i < SONGS_PER_PAGE; i++){
-                gSongName[i+addPage].render( 10, 50 +i*MAX_DISTANCE);
+            if(old_state != go_to_song_sel || old_addPage != addPage) {
+                gTexture.render(0,0);
+                for(int i = 0; i < SONGS_PER_PAGE; i++){
+                    printf("Rendering Titles\n");
+                    gSongName[i+addPage].render( 10, 50 +i*MAX_DISTANCE);
+                }
+                old_state = go_to_song_sel;
+                old_addPage = addPage;
             }
+            SDL_Rect notePanel;
+            notePanel.x = 580;
+            notePanel.y = 0;
+            notePanel.w= 60;
+            notePanel.h= 480;
+            SDL_RenderCopy(gRenderer, gTexture.mTexture, &notePanel, &notePanel);
+            printf("Rendering Dot\n");
             dot.render(gDotTexture[DOT_TEXTURE_NOTE]);
         }
         //Update screen
@@ -146,10 +163,10 @@ int main()
     //=====================
     //======= Close =======
     //=====================
-	//Free textures
-	for( int i = 0; i < KEY_PRESS_SURFACE_TOTAL; i++ ){
-		gKeyPressSurfaces[ i ].free();
-	}
+    //Free textures
+    for( int i = 0; i < KEY_PRESS_SURFACE_TOTAL; i++ ){
+        gKeyPressSurfaces[ i ].free();
+    }
     for(int i = 0; i < num_of_songs; i++){
         gSongName[i].free();
     }
@@ -159,19 +176,19 @@ int main()
     gTexture.free();
     
     //Free global font
-	TTF_CloseFont( gFont );
-	gFont = NULL;
-    
-	//Destroy window
-	SDL_DestroyRenderer( gRenderer );
-	SDL_DestroyWindow( gWindow );
-	gWindow = NULL;
-	gRenderer = NULL;
+    TTF_CloseFont( gFont );
+    gFont = NULL;
 
-	//Quit SDL subsystems
+    //Destroy window
+    SDL_DestroyRenderer( gRenderer );
+    SDL_DestroyWindow( gWindow );
+    gWindow = NULL;
+    gRenderer = NULL;
+
+    //Quit SDL subsystems
     TTF_Quit();
-	IMG_Quit();
-	SDL_Quit();
+    IMG_Quit();
+    SDL_Quit();
 
-	return 0;
+    return 0;
 }

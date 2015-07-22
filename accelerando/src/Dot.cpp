@@ -69,5 +69,5 @@ void Dot::move()
 void Dot::render(LTexture& gDotTexture)
 {
     //Show the dot
-	gDotTexture.render( mPosX, mPosY );
+    gDotTexture.render( mPosX, mPosY );
 }
