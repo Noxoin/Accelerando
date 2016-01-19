@@ -1,4 +1,16 @@
-#include <SDL2/SDL.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+int main() {
+    printf("Starting up Accelerando......\n");
+    
+#ifdef DEBUG
+    printf("DEBUG has been set..\n");
+#endif
+    return 0;
+}
+
+/*#include <SDL2/SDL.h>
 #include <string.h>
 #include <stdio.h>
 #include "timer.h"
@@ -314,4 +326,4 @@ int main() {
     SDL_Quit();
 
 }
-
+*/

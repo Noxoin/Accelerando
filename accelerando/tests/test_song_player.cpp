@@ -1,57 +1,88 @@
-#include "../src/keyboard_poll.h"
-#include <SDL2/SDL.h>
+////#include "../src/keyboard_poll.h"
 #include <string.h>
 #include <stdio.h>
 #include "../src/timer.h"
 #include "../src/user_event.h"
 #include "../src/song_player.h"
 
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
 
-SDL_Surface *screen = NULL;
-SDL_Window *window = NULL;
+SDL_Window* gWindow = NULL;
+SDL_Renderer* gRenderer = NULL;
 
 SDL_Event event;
 int quit = 0;
 
+LTexture gSymbol;
+LTexture gBuffer[3];
+
+
 int main() {
 
+    //======================
+    //===== Initialize =====
+    //======================
     if(SDL_Init(SDL_INIT_VIDEO) == -1) {
         printf("SDL couldn't start up for some reason\n");
         exit(1);
     }
 
-    window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    if(window == NULL) {
+    if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
+    {
+        printf( "Warning: Linear texture filtering not enabled!" );
+    }
+
+    gWindow = SDL_CreateWindow("Accelerando", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    if(gWindow == NULL) {
         printf("Windows is null!!\n");
         exit(1);
     }
+    
+    gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
+    
+    if( gRenderer == NULL ){
+        printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
+    }
+    else
+    {
+        SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
         
-    screen = SDL_GetWindowSurface(window);
+        //Initialize PNG loading
+        int imgFlags = IMG_INIT_PNG;
+        if( !( IMG_Init( imgFlags ) & imgFlags ) )
+        {
+            printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+        }
+        //Initialize fonts loading
+        //if( TTF_Init() == -1 )
+        //{
+        //   printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
+        //}
+        //gFont = TTF_OpenFont( "res/fonts/font1.ttf", 27 );
+    }
 
-    Image image(screen);
 
-    //SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF));
-
-
-    SongPlayer sp("res/songs/demo1.mid", image);
+    SongPlayer sp("res/songs/Cmaj_2Oct_RH_4n120_ScaleRun23Bars.mid", gRenderer, gSymbol, gBuffer);
     
     int ms = 7500/sp.getTempo();
 
     printf("Tempo is %dbpm (%d ms)\n", sp.getTempo(), ms);
 
-    KeyboardPoll kp;
-    kp.start();
+    ////KeyboardPoll kp;
+    ////kp.start();
 
-    sp.setPlayscreenBackground(image, screen);
-    SDL_UpdateWindowSurface(window);
+    sp.setPlayscreenBackground(gRenderer, gBuffer);
 
     Timer timer;
 
     int count = 0;
     timer.start(ms);
+
     
+    //=====================
+    //======== Run ========
+    //=====================
     while(!quit && !sp.finished) {
         while(SDL_PollEvent(&event) != 0) {
             switch(event.type) {
@@ -87,8 +118,7 @@ int main() {
                             break;
                         case TIMER_EVENT:
                             //printf("Time: %02ds\n", ++count);
-                            sp.timerHandler(screen);
-                            SDL_UpdateWindowSurface(window);
+                            sp.timerHandler(gRenderer, gBuffer);
                             break;
                     }
                     free(event.user.data1);
@@ -96,16 +126,39 @@ int main() {
             }
         }
     }
-
+    
+    
+    //=====================
+    //======= Close =======
+    //=====================
     int results[4];
     sp.getResults(results);
     printf("Perfect: %d, Good: %d, Ok: %d, Miss: %d\n", results[0], results[1], results[2], results[3]);
 
     timer.stop();
-    kp.stop();
+    ////kp.stop();
 
-    SDL_DestroyWindow(window);
+    //Free textures
+    gSymbol.free();
+    gBuffer[0].free(); 
+    gBuffer[1].free();
+    gBuffer[2].free(); 
+    
+    //Free global font
+    //TTF_CloseFont( gFont );
+    //gFont = NULL;
+    
+    //Destroy window
+    SDL_DestroyRenderer( gRenderer );
+    SDL_DestroyWindow( gWindow );
+    gWindow = NULL;
+    gRenderer = NULL;
+
+    //Quit SDL subsystems
+    //TTF_Quit();
+    IMG_Quit();
     SDL_Quit();
 
+    return 0;
 }
 

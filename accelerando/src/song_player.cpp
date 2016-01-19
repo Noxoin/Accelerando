@@ -1,10 +1,8 @@
 #include "song_player.h"
-#include <queue>
-#include "beeper.h"
 
 Beeper b;
 
-SongPlayer::SongPlayer(std::string filename, Image image){
+SongPlayer::SongPlayer(std::string filename, SDL_Renderer *gRenderer, LTexture gSymbol, LTexture *gBuffer){
     song = (Song *) malloc(sizeof(Song));
     char *file = new char[filename.length() + 1];
     strcpy(file, filename.c_str());
@@ -19,8 +17,13 @@ SongPlayer::SongPlayer(std::string filename, Image image){
     Gpio::init();
     finished = false;
     total_notes = 0;
-    xCord = 0;
-    musicSheetSurface = createMusicSurface(image, song);
+    xCord = -320;
+    oldXCord = -320;
+    row_num = 0;
+    page_num = 0;
+    createMusicSurface(gRenderer, gSymbol, gBuffer, song);
+    int w; 
+    int h;
 }
 
 SongPlayer::~SongPlayer(){
@@ -56,7 +59,7 @@ void SongPlayer::notePressedHandler(SDL_Event e) {
 }
 
 
-void SongPlayer::timerHandler(SDL_Surface* gScreenSurface) {
+void SongPlayer::timerHandler( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
     if(finished) {
         printf("Song has Finished\n");
         return;
@@ -151,8 +154,9 @@ void SongPlayer::timerHandler(SDL_Surface* gScreenSurface) {
         total_notes += song->bars[currBarIndex].length;
     }
 
-    xCord += 9.35;
-    updateMusicSurface(gScreenSurface, (int) xCord);
+    updateMusicSurface( gRenderer, gBuffer, (int) xCord, (int)oldXCord );
+    oldXCord = xCord;
+    xCord += 5.6198;//9.35;
 }
 
 int SongPlayer::getTempo() {
