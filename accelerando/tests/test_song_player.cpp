@@ -39,8 +39,9 @@ int main() {
         exit(1);
     }
     
-    gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
-    
+    gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE );
+    //gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE );
+
     if( gRenderer == NULL ){
         printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
     }
@@ -63,7 +64,7 @@ int main() {
     }
 
 
-    SongPlayer sp("res/songs/Cmaj_2Oct_RH_4n120_ScaleRun23Bars.mid", gRenderer, gSymbol, gBuffer);
+    SongPlayer sp("res/songs/Chromatic_C_RH_8n120_23Bars_plus.mid", gRenderer, gSymbol, gBuffer);//Cmaj_2Oct_RH_4n120_ScaleRun23Bars.mid
     
     int ms = 7500/sp.getTempo();
 

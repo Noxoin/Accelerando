@@ -3,6 +3,7 @@
 
 #include <string>
 #include <queue>
+#include <math.h>
 #include "midi_reader.h"
 #include "gpio.h"
 #include "LTexture.h"
@@ -28,7 +29,9 @@ class SongPlayer {
         double xCord;
         double oldXCord;
         void copySymbolCellToSurface( SDL_Renderer *gRenderer, SDL_Texture *SymTexture, int row, int col, int x, int y );
+        int resetNoteValue(Note note);
         int lookUpNote(int rowHeight, int currNoteValue);
+        void drawExtraLines(SDL_Renderer *gRenderer, int currNoteValue, int extraLineX, int notePos, int rowHeight);
         void createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol, LTexture *gBuffer, Song* song );
         void updateMusicSurface( SDL_Renderer *gRenderer, LTexture* gBuffer, int xCoord, int oldXCoord );
 

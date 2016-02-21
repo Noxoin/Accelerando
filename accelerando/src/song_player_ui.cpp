@@ -1,6 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string>
 #include "song_player.h"
 
 
@@ -17,12 +14,13 @@ const int BAR = 1;
 const int MUSIC_SHEET = 2;
 
 const int LINE_GAP = 15;
+const int EIGTHCHAIN_X_OFFSET = 23;
+const int EIGTHCHAIN_X_THICKNESS = 12;
 
 const int startPoint = 30;
 const int headWidth = 3*bitMapCellW;
 const int renderHeight = 170;
 
-const int OFFSET = 0;
 
 SDL_Rect copy;
 SDL_Rect paste;
@@ -52,6 +50,31 @@ void SongPlayer::setPlayscreenBackground ( SDL_Renderer *gRenderer, LTexture* gB
     SDL_RenderPresent( gRenderer );
 }
 
+//reset the note value. Add empty value b/w "half keys"
+int SongPlayer::resetNoteValue(Note note)
+{
+    int noteValue;
+    if (note.value >=60 && note.value <=64){
+        noteValue = note.value;
+    }
+    else if (note.value >=65 && note.value <= 71){
+        noteValue = note.value + 1;
+    }
+    else if (note.value >=72 && note.value <=76){
+        noteValue = note.value + 2;
+    }
+    else if (note.value >=77 && note.value <=83){
+        noteValue = note.value + 3;
+    }
+    else if (note.value >= 84){
+        noteValue = note.value + 4;
+    }
+    else{
+        noteValue = -2000;
+    }
+    return noteValue;
+}
+
 //Hardcode the note positions
 int SongPlayer::lookUpNote(int rowHeight, int currNoteValue)
 {
@@ -60,72 +83,72 @@ int SongPlayer::lookUpNote(int rowHeight, int currNoteValue)
         case 60:
             notePos = rowHeight + 27;
             break;
-        //case 61:
-        //    notePos = rowHeight + 22;
-        //    break;
+        case 61:
+            notePos = rowHeight + 27;
+            break;
         case 62:
             notePos = rowHeight + 20;
             break;
-        //case 63:
-        //    notePos = rowHeight;
-        //    break;        
+        case 63:
+            notePos = rowHeight + 13;
+            break;        
         case 64:
             notePos = rowHeight + 13;
             break;
         case 66:
             notePos = rowHeight + 4;
             break;
-        //case 67:
-        //    notePos = rowHeight;
-        //    break;
+        case 67:
+            notePos = rowHeight + 4;
+            break;
         case 68:
             notePos = rowHeight - 2;
             break;
-        //case 69:
-        //    notePos = rowHeight;
-        //    break;
+        case 69:
+            notePos = rowHeight -2;
+            break;
         case 70:
             notePos = rowHeight - 11;
             break;
-        //case 71:
-        //    notePos = rowHeight;
-        //    break;
+        case 71:
+            notePos = rowHeight - 18;
+            break;
         case 72:
             notePos = rowHeight - 18;
             break;
         case 74:
             notePos = rowHeight - 25;
             break;
-        //case 75:
-        //    notePos = rowHeight;
-        //    break;
+        case 75:
+            notePos = rowHeight - 25;
+            break;
         case 76:
             notePos = rowHeight - 33;
             break;
-        //case 77:
-        //    notePos = rowHeight;
-        //    break;
+        case 77:
+            notePos = rowHeight - 40;
+            break;
         case 78:
             notePos = rowHeight - 40;
             break;
         case 80:
             notePos = rowHeight - 48;
             break;
-        //case 81:
-        //    notePos = rowHeight;
-        //    break;
+        case 81:
+            notePos = rowHeight - 48;
+            break;
         case 82:
             notePos = rowHeight - 55;
             break;
-        //case 83:
-        //    notePos = rowHeight;
-        //    break;
+        case 83:
+            notePos = rowHeight - 55;
+            break;
         case 84:
             notePos = rowHeight - 62;
             break;
-        //case 85:
-        //    notePos = rowHeight;
-        //    break;
+        case 85:
+            notePos = rowHeight - 69;
+            break;
         case 86:
             notePos = rowHeight - 69;
             break;
@@ -138,6 +161,26 @@ int SongPlayer::lookUpNote(int rowHeight, int currNoteValue)
     return notePos;
 }
 
+void SongPlayer::drawExtraLines(SDL_Renderer *gRenderer, int currNoteValue, int extraLineX, int notePos, int rowHeight)
+{
+    int notePos_84;
+    if( currNoteValue == 60 || currNoteValue == 61 || currNoteValue == 84 || currNoteValue == 88){
+        draw.x = extraLineX;
+        draw.y = notePos + bitMapCellH/2+12;
+        draw.w = bitMapCellW/2+5;
+        draw.h = 2;
+        SDL_RenderFillRect(gRenderer, &draw);
+    }
+    if( currNoteValue == 85 || currNoteValue == 86 || currNoteValue == 88){
+        notePos_84 = lookUpNote(rowHeight, 84);
+        draw.x = extraLineX;
+        draw.y = notePos_84 + bitMapCellH/2+12;
+        draw.w = bitMapCellW/2+5;
+        draw.h = 2;
+        SDL_RenderFillRect(gRenderer, &draw);
+    }
+}
+
 //Projecting Image
 void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol, LTexture* gBuffer, Song* song )
 {
@@ -148,14 +191,22 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
     int eigthChain = 0;
     int restDuration = 0;
 
-    Note prevNote;
+    //Note prevNote;
     Note currNote;
     Note nextNote;
+    Note nextnextNote;
     
     int currNoteValue;
+    int nextNoteValue;
+    int nextNextNoteValue;
+
     int notePos;
-    int notePos_84;
-    
+    int nextNotePos;
+    int nextNextNotePos;
+
+    int eigthChainX;
+    int extraLineX;
+
     LTexture gBackground;
 
     int rowNum = 0;
@@ -211,25 +262,6 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
     
     gBackground.render(gRenderer, 0,0);
 
-    //Apply clef onto bliting background surface
-    //copy.x = 0;
-    //copy.y = 2*bitMapCellH;
-    //copy.w = bitMapCellW;
-    //copy.h = 2*bitMapCellH;
-
-    //paste.x = 0;
-    //paste.y = ROW_Y[rowNum] + LINE_GAP*2 - bitMapCellH;
-    //paste.w = bitMapCellW;
-    //paste.h = 2*bitMapCellH;
-
-    //SDL_RenderCopy(gRenderer, gSymbol.mTexture, &copy, &paste);
-
-    //Apply key sig onto bliting background surface (TODO)
-    //copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 7, song->bars[0].key, bitMapCellW, screen_height/2);
-
-    //Apply time sig onto bliting background surface
-    //copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 5, song->bars[0].tsig_numerator, bitMapCellW*2, ROW_Y[rowNum] + LINE_GAP*2-bitMapCellH/2);
-    //copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 5, song->bars[0].tsig_denominator, bitMapCellW*2, ROW_Y[rowNum] + LINE_GAP*2);
 
     SDL_SetRenderTarget( gRenderer, NULL );
     //Turn on Alpha(Texture). Important
@@ -274,79 +306,73 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
             }
 
             for (int note = 0; note < song->bars[bar].length; note++){
-                prevNote = song->bars[bar].notes[note-1];
+                //prevNote = song->bars[bar].notes[note-1];
                 currNote = song->bars[bar].notes[note];
                 nextNote = song->bars[bar].notes[note+1];
+                nextnextNote = song->bars[bar].notes[note+2];
                 restDuration = nextNote.time - currNote.duration - currNote.time;
                 
                 //reset the note value. Add empty value b/w "half keys"
-                if (currNote.value >=60 && currNote.value <=64){
-                    currNoteValue = currNote.value;
-                }
-                else if (currNote.value >=65 && currNote.value <= 71){
-                    currNoteValue = currNote.value + 1;
-                }
-                else if (currNote.value >=72 && currNote.value <=76){
-                    currNoteValue = currNote.value + 2;
-                }
-                else if (currNote.value >=77 && currNote.value <=83){
-                    currNoteValue = currNote.value + 3;
-                }
-                else if (currNote.value >= 84){
-                    currNoteValue = currNote.value + 4;
-                }
-                else{
-                    currNoteValue = 2000;
-                }
-                    
+                currNoteValue = resetNoteValue(currNote);
+                //loop up the hardcoded note position
+                notePos = lookUpNote(ROW_Y[rowNum], currNoteValue);
 
-                if (currNote.duration == 1 && ((nextNote.duration == 1 && nextNote.time == currNote.time+1) || eigthChain != 0)){
-                    //notePos = ROW_Y[rowNum] + LINE_GAP*2  - bitMapCellH/2 + (68-int(currNoteValue/2)*2)*(LINE_GAP/4) + 6 ;
-                    notePos = lookUpNote(ROW_Y[rowNum], currNoteValue);
+                if (currNote.duration == 1 && ((nextNote.time == currNote.time && nextnextNote.duration == 1 && nextnextNote.time == currNote.time+1) || eigthChain !=0)){
                     copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 1, 2, pageNum*screen_width + xRender + bitMapCellW*currNote.time, notePos);
-                    if (prevNote.duration == 1 && eigthChain < 3){
-                        draw.x = pageNum*screen_width + xRender + bitMapCellW*currNote.time - bitMapCellW/2;
-                        draw.y = ROW_Y[rowNum] + LINE_GAP*2 - bitMapCellH/2;
-                        draw.w = bitMapCellW;
-                        draw.h = 2;
-                        SDL_RenderFillRect(gRenderer, &draw);
-                        eigthChain++;
+                    //draw extra lines for specific notes
+                    extraLineX = pageNum*screen_width + xRender + bitMapCellW*currNote.time + 1;
+                    drawExtraLines(gRenderer, currNoteValue, extraLineX, notePos, ROW_Y[rowNum]);
+
+                    if (eigthChain==0 && currNoteValue>=60){
+                        //reset the note value. Add empty value b/w "half keys"
+                        nextNextNoteValue = resetNoteValue(nextnextNote);
+                        nextNextNotePos = lookUpNote(ROW_Y[rowNum], nextNextNoteValue);
+                        eigthChainX = pageNum*screen_width + xRender + bitMapCellW*currNote.time + EIGTHCHAIN_X_OFFSET;
+                        for(int m = 0; m < EIGTHCHAIN_X_THICKNESS; m++){
+                            SDL_RenderDrawLine(gRenderer, eigthChainX, notePos+m, eigthChainX+bitMapCellW, nextNextNotePos+m);
+                        }
+                        eigthChain = 3;
                     }
                     else{
-                        eigthChain=0;
+                        eigthChain--;
                     }
                 }
-                else
-                {
-                    //notePos = ROW_Y[rowNum] + LINE_GAP*2  - bitMapCellH/2 + (68-int(currNoteValue/2)*2)*(LINE_GAP/4) + 6;//screen_height/2 - bitMapCellH/2 + (67-currNote.value)*7 + 1;
-                    notePos = lookUpNote(ROW_Y[rowNum], currNoteValue);
+                else if (currNote.duration == 1 && ((nextNote.duration == 1 && nextNote.time == currNote.time+1) || eigthChain != 0)){
+                    copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 1, 2, pageNum*screen_width + xRender + bitMapCellW*currNote.time, notePos);
+                    //draw extra lines for specific notes
+                    extraLineX = pageNum*screen_width + xRender + bitMapCellW*currNote.time + 1;
+                    drawExtraLines(gRenderer, currNoteValue, extraLineX, notePos, ROW_Y[rowNum]);
+
+                    if (eigthChain==0 && currNoteValue>=60){
+                        //reset the note value. Add empty value b/w "half keys"
+                        nextNoteValue = resetNoteValue(nextNote);
+                        nextNotePos = lookUpNote(ROW_Y[rowNum], nextNoteValue);
+                        eigthChainX = pageNum*screen_width + xRender + bitMapCellW*currNote.time + EIGTHCHAIN_X_OFFSET;
+                        for(int m = 0; m < EIGTHCHAIN_X_THICKNESS; m++){
+                            SDL_RenderDrawLine(gRenderer, eigthChainX, notePos+m, eigthChainX+bitMapCellW, nextNotePos+m);
+                        }
+                        eigthChain = 1;
+                    }
+                    else{
+                        eigthChain--;
+                    }
+                }
+                else{
                     copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 1, currNote.duration, pageNum*screen_width + xRender + bitMapCellW*currNote.time, notePos);
-                    if( currNoteValue == 60 || currNoteValue == 61 || currNoteValue == 84 || currNoteValue == 88){
-                        draw.x = pageNum*screen_width + xRender + bitMapCellW*currNote.time + 2;
-                        draw.y = notePos + bitMapCellH/2+12;
-                        draw.w = bitMapCellW/2+5;
-                        draw.h = 2;
-                        SDL_RenderFillRect(gRenderer, &draw);
-                    }
-                    if( currNoteValue == 86 || currNoteValue == 88){
-                        notePos_84 = lookUpNote(ROW_Y[rowNum], 84);
-                        draw.x = pageNum*screen_width + xRender + bitMapCellW*currNote.time + 2;
-                        draw.y = notePos_84 + bitMapCellH/2+12;
-                        draw.w = bitMapCellW/2+5;
-                        draw.h = 2;
-                        SDL_RenderFillRect(gRenderer, &draw);
-                    }
-                    eigthChain=0;
+                    //draw extra lines for specific notes
+                    extraLineX = pageNum*screen_width + xRender + bitMapCellW*currNote.time + 1;
+                    drawExtraLines(gRenderer, currNoteValue, extraLineX, notePos, ROW_Y[rowNum]);
+                    eigthChain = 0;
                 }
-				
+
                 if (restDuration > 0){
                     copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 2, restDuration, pageNum*screen_width + xRender + bitMapCellW*(currNote.time+currNote.duration), ROW_Y[rowNum] + LINE_GAP*2 - bitMapCellH/2);
-                    eigthChain=0;
+                    eigthChain = 0;
                 }
             }
         }
 
-        eigthChain=0;
+        eigthChain = 0;
         xRender = xRender + barWidth;
         
         //draw the bar
@@ -356,20 +382,14 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
         draw.h = LINE_GAP*4;
         SDL_RenderFillRect(gRenderer, &draw);
     }
-    //Draw a line at end of score
-    //draw.x = xRender + pageNum*screen_width;
-    //draw.y = ROW_Y[rowNum];// + LINE_GAP*2 - bitMapCellH/4;
-    //draw.w = 2;
-    //draw.h = LINE_GAP*4;
-    //SDL_RenderFillRect(gRenderer, &draw);
 
+    //Draw a line at end of score
     draw.x = xRender + pageNum*screen_width  + 4;
     draw.y = ROW_Y[rowNum];
     draw.w = 4;
     draw.h = LINE_GAP*4 + 3;
     SDL_RenderFillRect(gRenderer, &draw);
-    
-    
+
     for (int i = 0; i <= pageNum; i++){
         if (i == pageNum){
             for (int j = 0; j <= rowNum; j++){//rowNum per page
@@ -392,6 +412,9 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
 
                 SDL_RenderCopy(gRenderer, gSymbol.mTexture, &copy, &paste);
 
+                //Apply key sig onto bliting background surface (TODO)
+                //copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 7, song->bars[0].key, startPoint + bitMapCellW + i*screen_width, ROW_Y[j]+ LINE_GAP*2);
+                
             	//Apply time sig onto bliting background surface
                 copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 5, song->bars[0].tsig_numerator, startPoint + bitMapCellW*2 + i*screen_width, ROW_Y[j] + LINE_GAP*2-bitMapCellH/2);
                 copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 5, song->bars[0].tsig_denominator, startPoint + bitMapCellW*2 + i*screen_width, ROW_Y[j] + LINE_GAP*2);
