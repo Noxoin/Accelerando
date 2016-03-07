@@ -15,7 +15,7 @@ const int MUSIC_SHEET = 2;
 
 const int LINE_GAP = 15;
 const int EIGTHCHAIN_X_OFFSET = 23;
-const int EIGTHCHAIN_X_THICKNESS = 12;
+const int EIGTHCHAIN_X_THICKNESS = LINE_GAP/2 + 3;
 
 const int startPoint = 30;
 const int headWidth = 3*bitMapCellW;
@@ -75,8 +75,8 @@ int SongPlayer::resetNoteValue(Note note)
     return noteValue;
 }
 
-//Hardcode the note positions
-int SongPlayer::lookUpNote(int rowHeight, int currNoteValue)
+//Hardcode the note positions 
+int SongPlayer::lookUpNote(int rowHeight, int currNoteValue, int sharpTrue)
 {
     int notePos;
     switch(currNoteValue){
@@ -84,13 +84,13 @@ int SongPlayer::lookUpNote(int rowHeight, int currNoteValue)
             notePos = rowHeight + 27;
             break;
         case 61:
-            notePos = rowHeight + 27;
+            notePos = rowHeight + 27 + 7*(sharpTrue - 1);
             break;
         case 62:
             notePos = rowHeight + 20;
             break;
         case 63:
-            notePos = rowHeight + 13;
+            notePos = rowHeight + 20 + 7*(sharpTrue - 1);
             break;        
         case 64:
             notePos = rowHeight + 13;
@@ -99,19 +99,19 @@ int SongPlayer::lookUpNote(int rowHeight, int currNoteValue)
             notePos = rowHeight + 4;
             break;
         case 67:
-            notePos = rowHeight + 4;
+            notePos = rowHeight + 4 + 6*(sharpTrue - 1);
             break;
         case 68:
             notePos = rowHeight - 2;
             break;
         case 69:
-            notePos = rowHeight -2;
+            notePos = rowHeight -2 + 9*(sharpTrue - 1);
             break;
         case 70:
             notePos = rowHeight - 11;
             break;
         case 71:
-            notePos = rowHeight - 18;
+            notePos = rowHeight - 11 + 7*(sharpTrue - 1);
             break;
         case 72:
             notePos = rowHeight - 18;
@@ -120,13 +120,13 @@ int SongPlayer::lookUpNote(int rowHeight, int currNoteValue)
             notePos = rowHeight - 25;
             break;
         case 75:
-            notePos = rowHeight - 25;
+            notePos = rowHeight - 25 + 8*(sharpTrue - 1);
             break;
         case 76:
             notePos = rowHeight - 33;
             break;
         case 77:
-            notePos = rowHeight - 40;
+            notePos = rowHeight - 33 + 7*(sharpTrue - 1);
             break;
         case 78:
             notePos = rowHeight - 40;
@@ -135,19 +135,19 @@ int SongPlayer::lookUpNote(int rowHeight, int currNoteValue)
             notePos = rowHeight - 48;
             break;
         case 81:
-            notePos = rowHeight - 48;
+            notePos = rowHeight - 48 + 7*(sharpTrue - 1);
             break;
         case 82:
             notePos = rowHeight - 55;
             break;
         case 83:
-            notePos = rowHeight - 55;
+            notePos = rowHeight - 55 + 7*(sharpTrue - 1);;
             break;
         case 84:
             notePos = rowHeight - 62;
             break;
         case 85:
-            notePos = rowHeight - 69;
+            notePos = rowHeight - 62 + 7*(sharpTrue - 1);;
             break;
         case 86:
             notePos = rowHeight - 69;
@@ -172,12 +172,254 @@ void SongPlayer::drawExtraLines(SDL_Renderer *gRenderer, int currNoteValue, int 
         SDL_RenderFillRect(gRenderer, &draw);
     }
     if( currNoteValue == 85 || currNoteValue == 86 || currNoteValue == 88){
-        notePos_84 = lookUpNote(rowHeight, 84);
+        notePos_84 = lookUpNote(rowHeight, 84, 1);
         draw.x = extraLineX;
         draw.y = notePos_84 + bitMapCellH/2+12;
         draw.w = bitMapCellW/2+5;
         draw.h = 2;
         SDL_RenderFillRect(gRenderer, &draw);
+    }
+}
+
+void SongPlayer::drawAccKey(SDL_Renderer *gRenderer, SDL_Texture *SymTexture, int keyNum, int currNoteValue, int x, int y)
+{
+    bool drawAccKey = false;
+    bool inKeySig = false;
+    bool natTrue = false;
+    int keyPos;
+
+    if(keyNum > 0){
+        for(int i = 0; i < keyNum; i++){
+            if(i == 0){//G major
+                if(currNoteValue == 81 || currNoteValue == 67 ){
+                    drawAccKey = false;
+                    inKeySig = true;
+                }
+                if((currNoteValue == 80) && (keyNum < 6)){
+                    keyPos = lookUpNote(y, 80, 1);//4
+                    drawAccKey = true;
+                    natTrue = true;
+                }
+            }
+            if(i == 1){//D major
+                if(currNoteValue == 75 || currNoteValue == 61){
+                    drawAccKey = false;
+                    inKeySig = true;
+                }
+                if((currNoteValue == 74) &&(keyNum < 7)){
+                    keyPos = lookUpNote(y, 74, 1);//1
+                    drawAccKey = true;
+                    natTrue = true;
+                }
+            }
+            if(i == 2){//A major
+                if(currNoteValue == 83 || currNoteValue == 69){
+                    drawAccKey = false;
+                    inKeySig = true;
+                }
+                if(currNoteValue == 82){
+                    keyPos = lookUpNote(y, 82, 1);//5
+                    drawAccKey = true;
+                    natTrue = true;
+                }
+            }
+            if(i == 3){//E major
+                if(currNoteValue == 77 || currNoteValue == 63){
+                    drawAccKey = false;
+                    inKeySig = true;
+                }
+                if(currNoteValue == 76){
+                    keyPos = lookUpNote(y, 76, 1);//2
+                    drawAccKey = true;
+                    natTrue = true;
+                }
+            }
+            if(i == 4){//B major
+                if(currNoteValue == 71 || currNoteValue == 85){
+                    drawAccKey = false;
+                    inKeySig = true;
+                }
+                if(currNoteValue == 70){
+                    keyPos = lookUpNote(y, 70, 1);//6
+                    drawAccKey = true;
+                    natTrue = true;
+                }
+            }
+            if(i == 5){//F# major
+                //if(currNoteValue == 80 or 66){
+                //    remap = true;
+                //}
+                if(currNoteValue == 78){
+                    keyPos = lookUpNote(y, 78, 1);//3
+                    drawAccKey = true;
+                    natTrue = true;
+                }
+            }
+            if(i == 6){//C# major
+                //if(currNoteValue == 74 or 88){
+                //    remap = true;
+                //}
+                if(currNoteValue == 72){
+                    keyPos = lookUpNote(y, 72, 1);//3
+                    drawAccKey = true;
+                    natTrue = true;
+                }
+            }
+            if(!inKeySig && (i == keyNum -1) && currNoteValue%2 == 1){
+                drawAccKey = true;
+                keyPos = lookUpNote(y, currNoteValue, 1);
+            }
+            if(drawAccKey){
+                copySymbolCellToSurface(gRenderer, SymTexture, 6, 1 + 1*natTrue, x-30, keyPos+30);
+                drawAccKey = false;
+            }
+        }
+        inKeySig = false;
+    }
+    else{
+        for(int i = 0; i < keyNum; i++){
+            if(i == 0){//F major
+                if(currNoteValue == 71 || currNoteValue == 85){
+                    drawAccKey = false;
+                    inKeySig = true;
+                }
+                if((currNoteValue == 72) && (keyNum < 6) ){
+                    keyPos = lookUpNote(y, 72, 0);//7
+                    drawAccKey = true;
+                    natTrue = true;
+                }
+            }
+            if(i == 1){//Bb major
+                if(currNoteValue == 63 || currNoteValue == 77){
+                    drawAccKey = false;
+                    inKeySig = true;
+                }
+                if((currNoteValue == 64) && (keyNum < 7)){
+                    keyPos = lookUpNote(y, 64, 0);//3
+                    drawAccKey = true;
+                    natTrue = true;
+                }
+            }
+            if(i == 2){//Eb major
+                if(currNoteValue == 69 || currNoteValue == 83){
+                    drawAccKey = false;
+                    inKeySig = true;
+                }
+                if(currNoteValue == 70){
+                    keyPos = lookUpNote(y, 70, 0);//6
+                    drawAccKey = true;
+                    natTrue = true;
+                }
+            }
+            if(i == 3){//Ab major
+                if(currNoteValue == 75 || currNoteValue == 61){
+                    drawAccKey = false;
+                    inKeySig = true;
+                }
+                if(currNoteValue == 76){
+                    keyPos = lookUpNote(y, 76, 0);//2
+                    drawAccKey = true;
+                    natTrue = true;
+                }
+            }
+            if(i == 4){//Db major
+                if(currNoteValue == 67 || currNoteValue == 81){
+                    drawAccKey = false;
+                    inKeySig = true;
+                }
+                if(currNoteValue == 68){
+                    keyPos = lookUpNote(y, 68, 0);//5
+                    drawAccKey = true;
+                    natTrue = true;
+                }
+            }
+            if(i == 5  && currNoteValue == 60){//Gb major
+                //if(currNoteValue == 72){
+                //    drawAccKey = false;
+                //}
+                if(currNoteValue == 74){
+                    keyPos = lookUpNote(y, 74, 0);//1
+                    drawAccKey = true;
+                    natTrue = true;
+                }
+            }
+            if(i == 6 && currNoteValue == 66){//Cb major
+                //if(currNoteValue == 64){
+                //    drawAccKey = false;
+                //}
+                if(currNoteValue == 66){
+                    keyPos = lookUpNote(y, 66, 0);//4
+                    drawAccKey = true;
+                    natTrue = true;
+                }
+            }
+            if(!inKeySig &&  (i == keyNum -1) && (currNoteValue%2 == 1)){
+                drawAccKey = true;
+                keyPos = lookUpNote(y, currNoteValue, 0);
+            }
+            if(drawAccKey){
+                copySymbolCellToSurface(gRenderer, SymTexture, 6, 3 - 1*natTrue, x-30, keyPos+30);
+                drawAccKey = false;
+            }
+        }
+        inKeySig = false;
+    }
+}
+
+void SongPlayer::drawKeySig(SDL_Renderer *gRenderer, SDL_Texture *SymTexture, int keyNum, int x, int y)
+{
+    int keyPos;
+    if(keyNum > 0){
+        for(int i = 0; i < keyNum; i++){
+            if(i == 0){//G major
+                keyPos = lookUpNote(y, 80, 1);//4
+            }
+            if(i == 1){//D major
+                keyPos = lookUpNote(y, 74, 1);//1
+            }
+            if(i == 2){//A major
+                keyPos = lookUpNote(y, 82, 1);//5
+            }
+            if(i == 3){//E major
+                keyPos = lookUpNote(y, 76, 1);//2
+            }
+            if(i == 4){//B major
+                keyPos = lookUpNote(y, 70, 1);//6
+            }
+            if(i == 5){//F# major
+                keyPos = lookUpNote(y, 78, 1);//3
+            }
+            if(i == 6){//C# major
+                keyPos = lookUpNote(y, 72, 1);//7
+            }
+            copySymbolCellToSurface(gRenderer, SymTexture, 6, 1, x-20+i*10, keyPos+30);
+        }
+    }
+    else{
+        for(int i = 0; i < keyNum; i++){
+            if(i == 0){//F major
+                keyPos = lookUpNote(y, 72, 0);//7
+            }
+            if(i == 1){//Bb major
+                keyPos = lookUpNote(y, 78, 0);//3
+            }
+            if(i == 2){//Eb major
+                keyPos = lookUpNote(y, 70, 0);//6
+            }
+            if(i == 3){//Ab major
+                keyPos = lookUpNote(y, 76, 0);//2
+            }
+            if(i == 4){//Db major
+               keyPos = lookUpNote(y, 68, 0);//5
+            }
+            if(i == 5){//Gb major
+                keyPos = lookUpNote(y, 74, 0);//1
+            }
+            if(i == 6){//Cb major
+                keyPos = lookUpNote(y, 66, 0);//4
+            }
+            copySymbolCellToSurface(gRenderer, SymTexture, 6, 3, x-20+i*10, keyPos+30);
+        }
     }
 }
 
@@ -188,8 +430,11 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
     screen_height = SCREEN_HEIGHT;
     int xRender = headWidth + startPoint;
     int barWidth = bitMapCellW*(song->bars[0].tsig_numerator*8/song->bars[0].tsig_denominator);
+    int eigthChainDouble = 0;
     int eigthChain = 0;
     int restDuration = 0;
+    
+    int keyNum;
 
     //Note prevNote;
     Note currNote;
@@ -208,6 +453,8 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
     int extraLineX;
 
     LTexture gBackground;
+
+    int sharpTrue = 1;
 
     int rowNum = 0;
     int pageNum = 0;
@@ -275,8 +522,16 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
 
     SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );//black, non-transparent
 
+    //key signature information
+    keyNum = song->bars[0].key;
+    if(keyNum < 0){
+        sharpTrue = 0;
+    }
+
+
     //Apply notes onto play texture
     for (int bar = 0; bar < song->length; bar++){
+        //printf( "bar key sig = %d\n", song->bars[bar].key );
         if ( (xRender+barWidth) > (screen_width - 20) ) {
             xRender = headWidth + startPoint;
             rowNum += 1;
@@ -312,33 +567,35 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
                 nextnextNote = song->bars[bar].notes[note+2];
                 restDuration = nextNote.time - currNote.duration - currNote.time;
                 
-                //reset the note value. Add empty value b/w "half keys"
+                //reset the note value. Add empty value b/w "half keys"//REMOVE. NO MORE USEFUL
                 currNoteValue = resetNoteValue(currNote);
                 //loop up the hardcoded note position
-                notePos = lookUpNote(ROW_Y[rowNum], currNoteValue);
+                notePos = lookUpNote(ROW_Y[rowNum], currNoteValue, sharpTrue);
 
-                if (currNote.duration == 1 && ((nextNote.time == currNote.time && nextnextNote.duration == 1 && nextnextNote.time == currNote.time+1) || eigthChain !=0)){
+                if (currNote.duration == 1 && ((nextNote.time == currNote.time && nextnextNote.duration == 1 && nextnextNote.time == currNote.time+1) || eigthChainDouble !=0)){
                     copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 1, 2, pageNum*screen_width + xRender + bitMapCellW*currNote.time, notePos);
+                    drawAccKey(gRenderer, gSymbol.mTexture, keyNum, currNoteValue, pageNum*screen_width + xRender + bitMapCellW*currNote.time, ROW_Y[rowNum]);
                     //draw extra lines for specific notes
                     extraLineX = pageNum*screen_width + xRender + bitMapCellW*currNote.time + 1;
                     drawExtraLines(gRenderer, currNoteValue, extraLineX, notePos, ROW_Y[rowNum]);
 
-                    if (eigthChain==0 && currNoteValue>=60){
+                    if (eigthChainDouble==0 && currNoteValue>=60){
                         //reset the note value. Add empty value b/w "half keys"
                         nextNextNoteValue = resetNoteValue(nextnextNote);
-                        nextNextNotePos = lookUpNote(ROW_Y[rowNum], nextNextNoteValue);
+                        nextNextNotePos = lookUpNote(ROW_Y[rowNum], nextNextNoteValue, sharpTrue);
                         eigthChainX = pageNum*screen_width + xRender + bitMapCellW*currNote.time + EIGTHCHAIN_X_OFFSET;
                         for(int m = 0; m < EIGTHCHAIN_X_THICKNESS; m++){
                             SDL_RenderDrawLine(gRenderer, eigthChainX, notePos+m, eigthChainX+bitMapCellW, nextNextNotePos+m);
                         }
-                        eigthChain = 3;
+                        eigthChainDouble = 3;
                     }
                     else{
-                        eigthChain--;
+                        eigthChainDouble--;
                     }
                 }
                 else if (currNote.duration == 1 && ((nextNote.duration == 1 && nextNote.time == currNote.time+1) || eigthChain != 0)){
                     copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 1, 2, pageNum*screen_width + xRender + bitMapCellW*currNote.time, notePos);
+                    drawAccKey(gRenderer, gSymbol.mTexture, keyNum, currNoteValue, pageNum*screen_width + xRender + bitMapCellW*currNote.time, ROW_Y[rowNum]);
                     //draw extra lines for specific notes
                     extraLineX = pageNum*screen_width + xRender + bitMapCellW*currNote.time + 1;
                     drawExtraLines(gRenderer, currNoteValue, extraLineX, notePos, ROW_Y[rowNum]);
@@ -346,7 +603,7 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
                     if (eigthChain==0 && currNoteValue>=60){
                         //reset the note value. Add empty value b/w "half keys"
                         nextNoteValue = resetNoteValue(nextNote);
-                        nextNotePos = lookUpNote(ROW_Y[rowNum], nextNoteValue);
+                        nextNotePos = lookUpNote(ROW_Y[rowNum], nextNoteValue, sharpTrue);
                         eigthChainX = pageNum*screen_width + xRender + bitMapCellW*currNote.time + EIGTHCHAIN_X_OFFSET;
                         for(int m = 0; m < EIGTHCHAIN_X_THICKNESS; m++){
                             SDL_RenderDrawLine(gRenderer, eigthChainX, notePos+m, eigthChainX+bitMapCellW, nextNotePos+m);
@@ -359,22 +616,23 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
                 }
                 else{
                     copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 1, currNote.duration, pageNum*screen_width + xRender + bitMapCellW*currNote.time, notePos);
+                    drawAccKey(gRenderer, gSymbol.mTexture, keyNum, currNoteValue, pageNum*screen_width + xRender + bitMapCellW*currNote.time, ROW_Y[rowNum]);
                     //draw extra lines for specific notes
                     extraLineX = pageNum*screen_width + xRender + bitMapCellW*currNote.time + 1;
                     drawExtraLines(gRenderer, currNoteValue, extraLineX, notePos, ROW_Y[rowNum]);
-                    eigthChain = 0;
+                    //eigthChain = 0;
                 }
 
                 if (restDuration > 0){
                     copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 2, restDuration, pageNum*screen_width + xRender + bitMapCellW*(currNote.time+currNote.duration), ROW_Y[rowNum] + LINE_GAP*2 - bitMapCellH/2);
-                    eigthChain = 0;
+                    //eigthChain = 0;
                 }
             }
         }
-
+        eigthChainDouble = 0;
         eigthChain = 0;
         xRender = xRender + barWidth;
-        
+
         //draw the bar
         draw.x = pageNum*screen_width + xRender - 2;// - 5;
         draw.y = ROW_Y[rowNum];// + LINE_GAP*2 - bitMapCellH/4;
@@ -391,7 +649,7 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
     SDL_RenderFillRect(gRenderer, &draw);
 
     for (int i = 0; i <= pageNum; i++){
-        if (i == pageNum){
+        if (i == pageNum){//last page
             for (int j = 0; j <= rowNum; j++){//rowNum per page
             	draw.x = startPoint - 3 + i*screen_width;
                 draw.y = ROW_Y[j];
@@ -412,8 +670,8 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
 
                 SDL_RenderCopy(gRenderer, gSymbol.mTexture, &copy, &paste);
 
-                //Apply key sig onto bliting background surface (TODO)
-                //copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 7, song->bars[0].key, startPoint + bitMapCellW + i*screen_width, ROW_Y[j]+ LINE_GAP*2);
+                //Apply key sig onto bliting background surface
+                drawKeySig(gRenderer, gSymbol.mTexture, keyNum, startPoint + bitMapCellW + i*screen_width, ROW_Y[j]);
                 
             	//Apply time sig onto bliting background surface
                 copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 5, song->bars[0].tsig_numerator, startPoint + bitMapCellW*2 + i*screen_width, ROW_Y[j] + LINE_GAP*2-bitMapCellH/2);
@@ -455,6 +713,9 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
                 paste.h = 2*bitMapCellH;
 
                 SDL_RenderCopy(gRenderer, gSymbol.mTexture, &copy, &paste);
+
+                //Apply key sig onto bliting background surface
+                drawKeySig(gRenderer, gSymbol.mTexture, keyNum, startPoint + bitMapCellW + i*screen_width, ROW_Y[p]);
 
             	//Apply time sig onto bliting background surface
                 copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 5, song->bars[0].tsig_numerator, startPoint + bitMapCellW*2 + i*screen_width, ROW_Y[p] + LINE_GAP*2-bitMapCellH/2);
