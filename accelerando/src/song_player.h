@@ -31,8 +31,8 @@ class SongPlayer {
         void copySymbolCellToSurface( SDL_Renderer *gRenderer, SDL_Texture *SymTexture, int row, int col, int x, int y );
         int resetNoteValue(Note note);
         int lookUpNote(int rowHeight, int currNoteValue, int sharpTrue);
-        void drawExtraLines(SDL_Renderer *gRenderer, int currNoteValue, int extraLineX, int notePos, int rowHeight);
-        void drawAccKey(SDL_Renderer *gRenderer, SDL_Texture *SymTexture, int keyNum, int currNoteValue, int x, int y);
+        void drawExtraLines(SDL_Renderer *gRenderer, int currNoteValue, int extraLineX, int notePos, int rowHeight, bool sharpTrue);
+        void drawAccKey(SDL_Renderer *gRenderer, SDL_Texture *SymTexture, int keyNum, int currNoteValue, int x, int y, bool goingUp);
         void drawKeySig(SDL_Renderer *gRenderer, SDL_Texture *SymTexture, int keyNum, int x, int y);
         void createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol, LTexture *gBuffer, Song* song );
         void updateMusicSurface( SDL_Renderer *gRenderer, LTexture* gBuffer, int xCoord, int oldXCoord );
