@@ -396,7 +396,8 @@ void SongPlayer::drawKeySig(SDL_Renderer *gRenderer, SDL_Texture *SymTexture, in
         }
     }
     else{
-        for(int i = 0; i < keyNum; i++){
+        int maxFlats = -keyNum;
+        for(int i = 0; i < maxFlats; i++){
             if(i == 0){//F major
                 keyPos = lookUpNote(y, 72, 0);//7
             }
@@ -524,8 +525,11 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
 
     //key signature information
     keyNum = song->bars[0].key;
-    if(keyNum < 0){
+    printf("the keySig is %d\n", keyNum);
+    //if(keyNum < 0){
+    if(keyNum >= 249){
         sharpTrue = 0;
+        keyNum = keyNum - 256;
     }
 
 
@@ -567,7 +571,7 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
                 nextnextNote = song->bars[bar].notes[note+2];
                 restDuration = nextNote.time - currNote.duration - currNote.time;
                 
-                //reset the note value. Add empty value b/w "half keys"//REMOVE. NO MORE USEFUL
+                //reset the note value. Add empty value b/w "half keys"
                 currNoteValue = resetNoteValue(currNote);
                 //loop up the hardcoded note position
                 notePos = lookUpNote(ROW_Y[rowNum], currNoteValue, sharpTrue);

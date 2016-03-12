@@ -64,7 +64,7 @@ int main() {
     }
 
 
-    SongPlayer sp("res/songs/TestMusicLv1D+_arpeggios_ht_mixRhy.mid", gRenderer, gSymbol, gBuffer);//Cmaj_2Oct_RH_4n120_ScaleRun23Bars.mid
+    SongPlayer sp("res/songs/test/Chromatic-in-Ab-major-start-on-C.mid", gRenderer, gSymbol, gBuffer);//Cmaj_2Oct_RH_4n120_ScaleRun23Bars.mid
     
     int ms = 7500/sp.getTempo();
 
