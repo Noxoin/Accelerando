@@ -1,16 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-
-int main() {
-    printf("Starting up Accelerando......\n");
-    
-#ifdef DEBUG
-    printf("DEBUG has been set..\n");
-#endif
-    return 0;
-}
-
-/*#include <SDL2/SDL.h>
+#include <SDL2/SDL.h>
 #include <string.h>
 #include <stdio.h>
 #include "timer.h"
@@ -21,15 +9,16 @@ int main() {
 #include "display_result.h"
 #include "SDLSetup.h"
 
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 1280; const int SCREEN_HEIGHT = 720;
 
-SDL_Surface *screen = NULL;
-SDL_Window *window = NULL;
-SDL_Renderer *renderer = NULL;
+//SDL_Surface *screen = NULL;
+SDL_Window *gWindow = NULL;
+SDL_Renderer *gRenderer = NULL;
 TTF_Font *font = NULL;
-     
 
+LTexture gSymbol;
+LTexture gBuffer[3];
+     
 SDL_Event event;
 int quit = 0;
 
@@ -43,19 +32,19 @@ void init() {
         printf("Warning: Linear texture filtering not enabled!");
     }
 
-    window = SDL_CreateWindow("Accelerando", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+    gWindow = SDL_CreateWindow("Accelerando", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
                                                                 SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    if(window == NULL) {
+    if(gWindow == NULL) {
         printf("Windows is null!!\n");
         exit(1);
     }
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if(renderer == NULL) {
+    gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+    if(gRenderer == NULL) {
         printf("Rnderer could not be created! SDL Error: %s\n", SDL_GetError());
         exit(1);
     }
-    SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
     int imgFlags = IMG_INIT_PNG;
     if(!(IMG_Init(imgFlags) & imgFlags)) {
         printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
@@ -65,7 +54,7 @@ void init() {
     }
     font = TTF_OpenFont("res/fonts/font1.ttf", 27);
         
-    screen = SDL_GetWindowSurface(window);
+    //screen = SDL_GetWindowSurface(gWindow);
     
 }
 
@@ -75,6 +64,8 @@ std::string song_selection() {
     int old_addPage = -1;
     int currRow = 0;
     int addPageMax;
+    int currSel = 0;
+    int currPage = -1;
     //Main loop flag
     bool selected = false;
     //Go to song selection screen flag
@@ -95,9 +86,9 @@ std::string song_selection() {
     //Song name texture
     LTexture gSongName[addPageMax];
 
-    SDL_RenderClear(renderer);
+    SDL_RenderClear(gRenderer);
     
-    loadSelectScreenMedia(renderer, font, gKeyPressSurfaces, gDotTexture, gSongName);
+    loadSelectScreenMedia(gRenderer, font, gKeyPressSurfaces, gDotTexture, gSongName);
 
     printf("Loaded Media\n");
 
@@ -108,6 +99,7 @@ std::string song_selection() {
         while(SDL_PollEvent(&event) != 0) {
             if(event.type == SDL_QUIT) {
                 quit = true;
+                break;
             }
 
             dot.handleEvent(event);
@@ -116,59 +108,88 @@ std::string song_selection() {
                 selected = true;
             }
             if( (event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_UP)){
+            /*
                 currRow++;
                 if(currRow == SONGS_PER_PAGE) {
                     currRow--;
                 }
+                */
+                if(currSel % SONGS_PER_PAGE > 0) {
+                    currSel--;
+                }
             }
             if( (event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_DOWN)) {
+            /*
                 currRow--;
                 if(currRow == -1) {
                     currRow++;
                 }
+            */
+                if(currSel % SONGS_PER_PAGE < (SONGS_PER_PAGE - 1)) {
+                    currSel++;
+                }
             }
-            if( (event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_LEFT) && addPage!=0){
-                addPage -= SONGS_PER_PAGE;
+            if( (event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_LEFT)){
+                //addPage -= SONGS_PER_PAGE;
+                if(currSel-SONGS_PER_PAGE > 0) {
+                    currSel -= SONGS_PER_PAGE;
+                }
             }
             if( (event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_RIGHT)){
+            /*
                 addPage += SONGS_PER_PAGE;
                 //stop turning over to the next page if this is the last page
                 if (addPage == addPageMax){
                     addPage -= SONGS_PER_PAGE;
                 }
+            */
+                if(currSel+SONGS_PER_PAGE < addPageMax) {
+                    currSel += SONGS_PER_PAGE;
+                }
             }
+            dot.move();
+            /*
+            if(old_addPage != addPage) {
+                bgTexture.render(gRenderer, 0,0);
+                for(int i = 0; i < SONGS_PER_PAGE; i++){
+                    //printf("Rendering Titles\n");
+                    gSongName[i+addPage].render(gRenderer, 10, 50 +i*MAX_DISTANCE);
+                }
+                old_addPage = addPage;
+            }
+            */
+            if(currPage != currSel/SONGS_PER_PAGE) {
+                bgTexture.render(gRenderer, 0,0);
+                for(int i = 0; i < SONGS_PER_PAGE; i++){
+                    gSongName[i+SONGS_PER_PAGE*(currSel/SONGS_PER_PAGE)].render(gRenderer, 10, 50 +i*MAX_DISTANCE);
+                }
+                currPage = currSel/SONGS_PER_PAGE;
+            }
+                
+
+            SDL_Rect notePanel;
+            notePanel.x = 580;
+            notePanel.y = 0;
+            notePanel.w= 60;
+            notePanel.h= 480;
+            SDL_RenderCopy(gRenderer, bgTexture.mTexture, &notePanel, &notePanel);
+            dot.render(gRenderer, gDotTexture[DOT_TEXTURE_NOTE]);
+            SDL_RenderPresent(gRenderer);
         }
 
-        dot.move();
-        if(old_addPage != addPage) {
-            bgTexture.render(renderer, 0,0);
-            for(int i = 0; i < SONGS_PER_PAGE; i++){
-                printf("Rendering Titles\n");
-                gSongName[i+addPage].render(renderer, 10, 50 +i*MAX_DISTANCE);
-            }
-            old_addPage = addPage;
-        }
-
-        SDL_Rect notePanel;
-        notePanel.x = 580;
-        notePanel.y = 0;
-        notePanel.w= 60;
-        notePanel.h= 480;
-        SDL_RenderCopy(renderer, bgTexture.mTexture, &notePanel, &notePanel);
-        printf("Rendering Dot\n");
-        dot.render(renderer, gDotTexture[DOT_TEXTURE_NOTE]);
-
-        SDL_RenderPresent(renderer);
     }
 
     std::string selectedSong;
     std::vector<std::string> files = getFileNames();
     int count = 0;
     for(std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it){
-        if(count++ == currRow+addPage) {
+        if(count == currSel) {
             selectedSong = (std::string) *it;
+            break;
         }
+        count++;
     }
+
 
     return selectedSong;
 }
@@ -186,19 +207,19 @@ void results_screen(int (&results)[4], int idealHits) {
 
     strScore = calculateResult(idealHits, r);
 
-    loadResultsMedia(renderer, gScore, strScore, font);
+    loadResultsMedia(gRenderer, gScore, strScore, font);
 
-    SDL_RenderClear(renderer);
+    SDL_RenderClear(gRenderer);
 
-    gScore[RANK].render( renderer, ( SCREEN_WIDTH - gScore[RANK].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[RANK].getHeight() ) / 2-150 );
-    gScore[PERFECT].render( renderer, ( SCREEN_WIDTH - gScore[PERFECT].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[PERFECT].getHeight() ) / 2-100 );
-    gScore[GOOD].render( renderer, ( SCREEN_WIDTH - gScore[GOOD].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[GOOD].getHeight() ) / 2 -50);
-    gScore[BAD].render( renderer, ( SCREEN_WIDTH - gScore[BAD].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[BAD].getHeight() ) / 2 );
-    gScore[MISS].render( renderer, ( SCREEN_WIDTH - gScore[MISS].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[MISS].getHeight() ) / 2 +50);
-    gScore[TOTAL].render( renderer, ( SCREEN_WIDTH - gScore[TOTAL].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[TOTAL].getHeight() ) / 2 +100);
-    gScore[ACCURACY].render( renderer, ( SCREEN_WIDTH - gScore[ACCURACY].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[ACCURACY].getHeight() ) / 2 +150);
+    gScore[RANK].render( gRenderer, ( SCREEN_WIDTH - gScore[RANK].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[RANK].getHeight() ) / 2-150 );
+    gScore[PERFECT].render( gRenderer, ( SCREEN_WIDTH - gScore[PERFECT].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[PERFECT].getHeight() ) / 2-100 );
+    gScore[GOOD].render( gRenderer, ( SCREEN_WIDTH - gScore[GOOD].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[GOOD].getHeight() ) / 2 -50);
+    gScore[BAD].render( gRenderer, ( SCREEN_WIDTH - gScore[BAD].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[BAD].getHeight() ) / 2 );
+    gScore[MISS].render( gRenderer, ( SCREEN_WIDTH - gScore[MISS].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[MISS].getHeight() ) / 2 +50);
+    gScore[TOTAL].render( gRenderer, ( SCREEN_WIDTH - gScore[TOTAL].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[TOTAL].getHeight() ) / 2 +100);
+    gScore[ACCURACY].render( gRenderer, ( SCREEN_WIDTH - gScore[ACCURACY].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[ACCURACY].getHeight() ) / 2 +150);
     //Update screen
-    SDL_RenderPresent( renderer );
+    SDL_RenderPresent( gRenderer );
 
     while(!quit && !exit) {
         while(SDL_PollEvent(&event) != 0) {
@@ -214,18 +235,18 @@ void results_screen(int (&results)[4], int idealHits) {
 
 }
 
-void play(std::string filename, Image image) {
-    SongPlayer sp("res/songs/demo1.mid", image);
+void play(std::string filename) {
+    SongPlayer sp("res/songs/demo1.mid", gRenderer, gSymbol, gBuffer);
     
     int ms = 7500/sp.getTempo();
 
     printf("Tempo is %dbpm (%d ms)\n", sp.getTempo(), ms);
 
     KeyboardPoll kp;
-    kp.start();
+    //kp.start();
 
-    sp.setPlayscreenBackground(image, screen);
-    SDL_UpdateWindowSurface(window);
+    sp.setPlayscreenBackground(gRenderer, gBuffer);
+    //SDL_UpdateWindowSurface(gWindow);
 
     Timer timer;
 
@@ -234,9 +255,10 @@ void play(std::string filename, Image image) {
     
     while(!quit && !sp.finished) {
         while(SDL_PollEvent(&event) != 0) {
+            if(quit) { break;}
             switch(event.type) {
                 case SDL_QUIT:
-                    quit = 1;
+                    quit = true;
                     break;
                 case SDL_KEYDOWN:
                     switch(event.key.keysym.sym) {
@@ -259,16 +281,18 @@ void play(std::string filename, Image image) {
                 case SDL_USEREVENT:
                     switch(event.user.code) {
                         case NOTE_PRESSED:
+                            //Gpio::setValue(, Gpio::HIGH);
                             sp.notePressedHandler(event);
                             //printf("Piano Key %d was pressed\n", *(unsigned char *)event.user.data1);
                             break;
                         case NOTE_RELEASED:
+                            //Gpio::setValue(, Gpio::LOW);
                             //printf("Piano Key %d was released\n", *(unsigned char *)event.user.data1);
                             break;
                         case TIMER_EVENT:
                             //printf("Time: %02ds\n", ++count);
-                            sp.timerHandler(screen);
-                            SDL_UpdateWindowSurface(window);
+                            sp.timerHandler(gRenderer, gBuffer);
+                            //SDL_UpdateWindowSurface(window);
                             break;
                     }
                     free(event.user.data1);
@@ -278,25 +302,31 @@ void play(std::string filename, Image image) {
     }
 
     timer.stop();
-    kp.stop();
+    //kp.stop();
 
     int results[4];
     sp.getResults(results);
     printf("Perfect: %d, Good: %d, Ok: %d, Miss: %d\n", results[0], results[1], results[2], results[3]);
     results_screen(results, sp.total_notes);
+
+    gSymbol.free();
+    for(int i = 0; i < 3; ++i) {
+        gBuffer[i].free();
+    }
+
 }
 
 int main() {
 
     init();
-    SDL_RenderClear(renderer);
+    SDL_RenderClear(gRenderer);
     // Init
     LTexture gTexture;
-    if(!gTexture.loadFromFile(renderer, "res/screen/WelcomeScreen.png")){
+    if(!gTexture.loadFromFile(gRenderer, "res/screen/WelcomeScreen.png")){
         printf("Failed to load welcome screen\n");
     }
-    SDL_RenderCopy(renderer, gTexture.mTexture, NULL, NULL);
-    SDL_RenderPresent(renderer);
+    SDL_RenderCopy(gRenderer, gTexture.mTexture, NULL, NULL);
+    SDL_RenderPresent(gRenderer);
     bool enter = false;
 
     while(!quit) {
@@ -315,15 +345,19 @@ int main() {
 
         printf("Entering song select\n");
         std::string filename = song_selection();
+        if(quit) { break;}
         printf("Selected Song is %s\n", filename.c_str());
-        Image image(screen);
-        play(filename, image);
+        play(filename);
 
     }
 
     //SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF));
-    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(gRenderer);
+    SDL_DestroyWindow(gWindow);
+    gWindow = NULL;
+    gRenderer = NULL;
+
+    IMG_Quit();
     SDL_Quit();
 
 }
-*/

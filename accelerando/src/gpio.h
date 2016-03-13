@@ -6,7 +6,7 @@ class Gpio {
         const static int HIGH = 1;
         const static int LOW = 0;
 
-        const static int CLK = 11;
+        const static int CLK = 9;
         const static int A2 = 33;
         const static int AS2 = 34;
         const static int BF2 = 34;
@@ -28,7 +28,7 @@ class Gpio {
         const static int AS3 = 14;
         const static int BF3 = 14;
         const static int B3 = 15;
-        const static int C4 = 16;
+        const static int C4 = 7;
         const static int CS4 = 17;
         const static int DF4 = 17;
         const static int D4 = 18;

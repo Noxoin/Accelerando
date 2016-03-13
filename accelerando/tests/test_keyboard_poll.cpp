@@ -2,6 +2,8 @@
 #include "../src/user_event.h"
 #include <SDL2/SDL.h>
 #include <stdio.h>
+#include <time.h>
+#include <sys/time.h>
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
@@ -43,6 +45,12 @@ int main() {
 */
     KeyboardPoll kp;
     kp.start();
+
+    struct timeval tv1;
+    gettimeofday(&tv1, NULL);
+    struct timeval tv2;
+    gettimeofday(&tv2, NULL);
+    printf("Overhead of gettimeofday: %d\n", tv2.tv_usec-tv1.tv_usec);
     
     int hello;
     while(!quit) {
@@ -68,14 +76,14 @@ int main() {
                     }
                     break;
                 case SDL_USEREVENT:
+                    struct timeval tv;
+                    gettimeofday(&tv,NULL);
                     switch(event.user.code) {
                         case NOTE_PRESSED:
-                            hello = *(unsigned char *) event.user.data1;
-                            printf("Piano Key %d was pressed\n", *(unsigned char *)event.user.data1);
-                            printf("Piano Key %d was pressed\n", hello);
+                            printf("Piano Key %d was pressed: End: %d\n", *(unsigned char *)event.user.data1, tv.tv_usec);
                             break;
                         case NOTE_RELEASED:
-                            printf("Piano Key %d was released\n", *(unsigned char *)event.user.data1);
+                            printf("Piano Key %d was released: End: %d\n", *(unsigned char *)event.user.data1, tv.tv_usec);
                             break;
                     }
                     free(event.user.data1);

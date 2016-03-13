@@ -1,6 +1,8 @@
 #include "keyboard_poll.h"
 #include <SDL2/SDL.h>
 #include "user_event.h"
+#include <time.h>
+#include <sys/time.h>
 
 #define NUM_THREADS 1
 
@@ -18,26 +20,30 @@ void *polling(void *arg) {
     const char* portname = "hw:2,0,0";
     char buffer[1];
 
-    printf("I'm here\n");
-
     if ((status = snd_rawmidi_open(&midiin, NULL, portname, mode)) < 0) {
+        printf("Problem opening MIDI input: %s", snd_strerror(status));
         errormessage("Problem opening MIDI input: %s", snd_strerror(status));
         exit(1);
     }
 
     while(poll_status) {
         if((status = snd_rawmidi_read(midiin, buffer, 1)) < 0) {
+            printf("Problem reading MIDI input: %s", snd_strerror(status));
             errormessage("Problem reading MIDI input: %s", snd_strerror(status));
         }
         if((unsigned char) buffer[0] >= 0x80) {
             unsigned char event = buffer[0];
             if (event == 0x80 || event == 0x90) {
+                struct timeval tv;
+                gettimeofday(&tv,NULL);
                 if((status = snd_rawmidi_read(midiin, buffer, 1)) < 0) {
+                    printf("Problem reading MIDI input: %s", snd_strerror(status));
                     errormessage("Problem reading MIDI input: %s", snd_strerror(status));
                 }
                 unsigned char *note = (unsigned char*)malloc(sizeof(unsigned char));
                 *note = buffer[0];
                 if((status = snd_rawmidi_read(midiin, buffer, 1)) < 0) {
+                    printf("Problem reading MIDI input: %s", snd_strerror(status));
                     errormessage("Problem reading MIDI input: %s", snd_strerror(status));
                 }
                 SDL_Event e;
@@ -53,6 +59,7 @@ void *polling(void *arg) {
                     //printf("Note pressed: %02d\n", *note);
                 }
                 SDL_PushEvent(&e);
+                printf("Received %d at %d\n", *(unsigned char *) note, tv.tv_usec);
             }
         } 
         fflush(stdout);

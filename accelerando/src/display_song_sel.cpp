@@ -17,7 +17,7 @@ int readFileNames() {
 	}
 
 	while((dirp=readdir(dp))!=NULL){
-		if((strcmp(dirp->d_name,".")==0)||(strcmp(dirp->d_name,"..")==0))
+		if((strcmp(dirp->d_name,".")==0)||(strcmp(dirp->d_name,"..")==0)||(strcmp(dirp->d_name,"fromInternet")==0))
 		        continue;
 		file_names.push_back(dirp->d_name);
 	}
