@@ -19,15 +19,15 @@
 
 
 //Maximum axis velocity of the dot
-const double DOT_VEL = 70;
+const double DOT_VEL = 110;
 //Initial status of the dot
-const double INITIAL_POS_X = 580;
-const double INITIAL_POS_Y = 5;
+const double INITIAL_POS_X = 1200;
+const double INITIAL_POS_Y = 40;
 const double INITIAL_VEL = 0;
 //Final status of the dot
-const double FINAL_POS_Y = 355;
+const double FINAL_POS_Y = 590;
 //Max distance in one press
-const double MAX_DISTANCE = 70;
+const double MAX_DISTANCE = 110;
 //Dot dimension constants
 //const int DOT_WIDTH = 72;
 //const int DOT_HEIGHT = 97;

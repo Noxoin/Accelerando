@@ -171,7 +171,7 @@ void SongPlayer::drawExtraLines(SDL_Renderer *gRenderer, int currNoteValue, int 
         draw.h = 2;
         SDL_RenderFillRect(gRenderer, &draw);
     }
-    if(currNoteValue == 86 || currNoteValue == 88 || (currNoteValue == 85 && !sharpTrue)){
+    if(currNoteValue == 86 || currNoteValue == 88 || currNoteValue == 85 || (currNoteValue == 83 && !sharpTrue)){
         notePos_84 = lookUpNote(rowHeight, 84, 1);
         draw.x = extraLineX;
         draw.y = notePos_84 + bitMapCellH/2+12;

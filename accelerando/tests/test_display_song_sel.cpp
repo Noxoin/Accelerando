@@ -2,6 +2,13 @@
 
 using namespace std;
 
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
+
+SDL_Window* gWindow = NULL;
+SDL_Renderer* gRenderer = NULL;
+TTF_Font *gFont = NULL;
+
 int main()
 {
     int num_of_songs;
@@ -74,7 +81,7 @@ int main()
 				{
 					printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
 				}
-                                gFont = TTF_OpenFont( "res/fonts/font1.ttf", 27 );
+                                gFont = TTF_OpenFont( "res/fonts/font1.ttf", 52 );
 			}
 		}
 	}
@@ -84,7 +91,7 @@ int main()
     //======================
     //===== Load Media =====
     //======================
-    loadSelectScreenMedia(gKeyPressSurfaces, gDotTexture, gSongName);
+    loadSelectScreenMedia(gRenderer, gFont, gKeyPressSurfaces, gDotTexture, gSongName);
 
 
     
@@ -93,7 +100,7 @@ int main()
     //=====================
     //Set default current surface
     gTexture = gKeyPressSurfaces[ KEY_PRESS_SURFACE_DEFAULT ];
-    gTexture.render(0,0);
+    gTexture.render(gRenderer, 0,0);
     bool old_state = go_to_song_sel;
     int old_addPage = addPage;
     
@@ -137,22 +144,22 @@ int main()
         //Render objects
         if (go_to_song_sel){
             if(old_state != go_to_song_sel || old_addPage != addPage) {
-                gTexture.render(0,0);
+                gTexture.render(gRenderer, 0,0);
                 for(int i = 0; i < SONGS_PER_PAGE; i++){
-                    printf("Rendering Titles\n");
-                    gSongName[i+addPage].render( 10, 50 +i*MAX_DISTANCE);
+                    //printf("Rendering Titles\n");
+                    gSongName[i+addPage].render( gRenderer, 10, 50 +i*MAX_DISTANCE);
                 }
                 old_state = go_to_song_sel;
                 old_addPage = addPage;
             }
             SDL_Rect notePanel;
-            notePanel.x = 580;
+            notePanel.x = 1200;
             notePanel.y = 0;
-            notePanel.w= 60;
-            notePanel.h= 480;
+            notePanel.w= 80;
+            notePanel.h= 720;
             SDL_RenderCopy(gRenderer, gTexture.mTexture, &notePanel, &notePanel);
-            printf("Rendering Dot\n");
-            dot.render(gDotTexture[DOT_TEXTURE_NOTE]);
+            //printf("Rendering Dot\n");
+            dot.render(gRenderer, gDotTexture[DOT_TEXTURE_NOTE]);
         }
         //Update screen
         SDL_RenderPresent( gRenderer );

@@ -52,7 +52,7 @@ void init() {
     if(TTF_Init() == -1) {
         printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
     }
-    font = TTF_OpenFont("res/fonts/font1.ttf", 27);
+    font = TTF_OpenFont("res/fonts/font1.ttf", 52);
         
     //screen = SDL_GetWindowSurface(gWindow);
     
@@ -168,10 +168,10 @@ std::string song_selection() {
                 
 
             SDL_Rect notePanel;
-            notePanel.x = 580;
+            notePanel.x = 1200;//580;
             notePanel.y = 0;
-            notePanel.w= 60;
-            notePanel.h= 480;
+            notePanel.w= 70;//60;
+            notePanel.h= 720;//480;
             SDL_RenderCopy(gRenderer, bgTexture.mTexture, &notePanel, &notePanel);
             dot.render(gRenderer, gDotTexture[DOT_TEXTURE_NOTE]);
             SDL_RenderPresent(gRenderer);
