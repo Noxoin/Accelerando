@@ -2,6 +2,13 @@
 
 using namespace std;
 
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
+
+SDL_Window* gWindow = NULL;
+SDL_Renderer* gRenderer = NULL;
+TTF_Font *gFont = NULL;
+
 int main( )
 {
     //Main loop flag
@@ -80,7 +87,7 @@ int main( )
     //======================
     //===== Load Media =====
     //=====================
-    loadMedia(gScore, strScore);
+    loadResultsMedia(gRenderer, gScore, strScore, gFont);
 
     
     
@@ -102,13 +109,13 @@ int main( )
         SDL_RenderClear( gRenderer );
 
         //Render current frame
-        gScore[RANK].render( ( SCREEN_WIDTH - gScore[RANK].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[RANK].getHeight() ) / 2-150 );
-        gScore[PERFECT].render( ( SCREEN_WIDTH - gScore[PERFECT].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[PERFECT].getHeight() ) / 2-100 );
-        gScore[GOOD].render( ( SCREEN_WIDTH - gScore[GOOD].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[GOOD].getHeight() ) / 2 -50);
-        gScore[BAD].render( ( SCREEN_WIDTH - gScore[BAD].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[BAD].getHeight() ) / 2 );
-        gScore[MISS].render( ( SCREEN_WIDTH - gScore[MISS].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[MISS].getHeight() ) / 2 +50);
-        gScore[TOTAL].render( ( SCREEN_WIDTH - gScore[TOTAL].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[TOTAL].getHeight() ) / 2 +100);
-        gScore[ACCURACY].render( ( SCREEN_WIDTH - gScore[ACCURACY].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[ACCURACY].getHeight() ) / 2 +150);
+        gScore[RANK].render( gRenderer, ( SCREEN_WIDTH - gScore[RANK].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[RANK].getHeight() ) / 2-150 );
+        gScore[PERFECT].render( gRenderer, ( SCREEN_WIDTH - gScore[PERFECT].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[PERFECT].getHeight() ) / 2-100 );
+        gScore[GOOD].render( gRenderer, ( SCREEN_WIDTH - gScore[GOOD].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[GOOD].getHeight() ) / 2 -50);
+        gScore[BAD].render( gRenderer, ( SCREEN_WIDTH - gScore[BAD].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[BAD].getHeight() ) / 2 );
+        gScore[MISS].render( gRenderer, ( SCREEN_WIDTH - gScore[MISS].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[MISS].getHeight() ) / 2 +50);
+        gScore[TOTAL].render( gRenderer, ( SCREEN_WIDTH - gScore[TOTAL].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[TOTAL].getHeight() ) / 2 +100);
+        gScore[ACCURACY].render( gRenderer, ( SCREEN_WIDTH - gScore[ACCURACY].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[ACCURACY].getHeight() ) / 2 +150);
         //Update screen
         SDL_RenderPresent( gRenderer );
     }

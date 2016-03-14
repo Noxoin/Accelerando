@@ -208,7 +208,7 @@ void results_screen(int (&results)[4], int idealHits) {
     strScore = calculateResult(idealHits, r);
 
     loadResultsMedia(gRenderer, gScore, strScore, font);
-
+    SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(gRenderer);
 
     gScore[RANK].render( gRenderer, ( SCREEN_WIDTH - gScore[RANK].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[RANK].getHeight() ) / 2-150 );
@@ -236,7 +236,7 @@ void results_screen(int (&results)[4], int idealHits) {
 }
 
 void play(std::string filename) {
-    SongPlayer sp("res/songs/demo1.mid", gRenderer, gSymbol, gBuffer);
+    SongPlayer sp("res/songs/test/Abmaj_1Oct_RH_8n120.mid", gRenderer, gSymbol, gBuffer);
     
     int ms = 7500/sp.getTempo();
 
