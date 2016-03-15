@@ -52,8 +52,11 @@ void SongPlayer::copySymbolCellToSurface( SDL_Renderer *gRenderer, SDL_Texture *
 //Set background with clef, key sig, and time sig
 void SongPlayer::setPlayscreenBackground ( SDL_Renderer *gRenderer, LTexture* gBuffer )
 { 
-    SDL_RenderCopy(gRenderer, gBuffer[BACKGROUND].mTexture, NULL, NULL);
-    SDL_RenderPresent( gRenderer );
+    ////SDL_RenderCopy(gRenderer, gBuffer[BACKGROUND].mTexture, NULL, NULL);
+    ////SDL_RenderPresent( gRenderer );
+    //Clear screen
+    SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+    SDL_RenderClear( gRenderer );
 }
 
 //reset the note value. Add empty value b/w "half keys"
@@ -810,17 +813,17 @@ void SongPlayer::updateMusicSurface( SDL_Renderer *gRenderer, LTexture* gBuffer,
     if (oldXCoord%ROW_X >= (-headWidth-startPoint)){
         //remove the previous bar
         //recover the background
-        copy.x = oldXCoord%ROW_X + headWidth + startPoint - barW/2;
-        copy.y = row_num*renderHeight;
-        copy.w = barW;
-        copy.h = barH;
+        ////copy.x = oldXCoord%ROW_X + headWidth + startPoint - barW/2;
+        ////copy.y = row_num*renderHeight;
+        ////copy.w = barW;
+        ////copy.h = barH;
 
-        paste.x = oldXCoord%ROW_X + headWidth + startPoint - barW/2;
-        paste.y = row_num*renderHeight;
-        paste.w = barW;
-        paste.h = barH;
+        ////paste.x = oldXCoord%ROW_X + headWidth + startPoint - barW/2;
+        ////paste.y = row_num*renderHeight;
+        ////paste.w = barW;
+        ////paste.h = barH;
         
-        SDL_RenderCopy(gRenderer, gBuffer[BACKGROUND].mTexture, &copy, &paste);
+        ////SDL_RenderCopy(gRenderer, gBuffer[BACKGROUND].mTexture, &copy, &paste);
     
         //recover the notes
         copy.x = oldXCoord%ROW_X + headWidth + startPoint - barW/2 + page_num*screen_width;
@@ -865,17 +868,17 @@ void SongPlayer::updateMusicSurface( SDL_Renderer *gRenderer, LTexture* gBuffer,
             replace_row_num = 3;
             //Replace the old row with the new row
             //Remove the old row
-            copy.x = 0;
-            copy.y = replace_row_num*renderHeight;
-            copy.w = screen_width;
-            copy.h = renderHeight;
+            ////copy.x = 0;
+            ////copy.y = replace_row_num*renderHeight;
+            ///copy.w = screen_width;
+            ///copy.h = renderHeight;
 
             paste.x = 0;
             paste.y = replace_row_num*renderHeight;
             paste.w = screen_width;
             paste.h = renderHeight;
             
-            SDL_RenderCopy(gRenderer, gBuffer[BACKGROUND].mTexture, &copy, &paste);
+            ///SDL_RenderCopy(gRenderer, gBuffer[BACKGROUND].mTexture, &copy, &paste);
 
             //Display the new row
             copy.x = page_num*screen_width;
@@ -889,17 +892,17 @@ void SongPlayer::updateMusicSurface( SDL_Renderer *gRenderer, LTexture* gBuffer,
         if(page_num != total_page_num && replace_row_num != -1 && replace_row_num !=3){
             //Replace the old row with the new row
             //Remove the old row
-            copy.x = 0;
-            copy.y = replace_row_num*renderHeight;
-            copy.w = screen_width;
-            copy.h = renderHeight;
+            ///copy.x = 0;
+            ////copy.y = replace_row_num*renderHeight;
+            ////copy.w = screen_width;
+            ////copy.h = renderHeight;
 
             paste.x = 0;
             paste.y = replace_row_num*renderHeight;
             paste.w = screen_width;
             paste.h = renderHeight;
             
-            SDL_RenderCopy(gRenderer, gBuffer[BACKGROUND].mTexture, &copy, &paste);
+            ////SDL_RenderCopy(gRenderer, gBuffer[BACKGROUND].mTexture, &copy, &paste);
 
             //Display the new row
             copy.x = (page_num+1)*screen_width;
