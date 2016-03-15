@@ -1,6 +1,5 @@
 #include "song_player.h"
 
-
 const int song_MaxWidth = 8191;//MAX VALUE. TEXUTRE LIMIT
 
 const int bitMapCellW = 45;
@@ -21,10 +20,17 @@ const int startPoint = 30;
 const int headWidth = 3*bitMapCellW;
 const int renderHeight = 170;
 
-
 SDL_Rect copy;
 SDL_Rect paste;
 SDL_Rect draw;
+
+std::string toBarString(int intValue)
+{
+    std::stringstream ss;
+    ss << intValue;
+    std::string str = ss.str();
+    return str;
+}
 
 
 //Blit the notes to the music sheet
@@ -181,7 +187,7 @@ void SongPlayer::drawExtraLines(SDL_Renderer *gRenderer, int currNoteValue, int 
     }
 }
 
-void SongPlayer::drawAccKey(SDL_Renderer *gRenderer, SDL_Texture *SymTexture, int keyNum, int currNoteValue, int x, int y, bool goingUp)
+/*void SongPlayer::drawAccKey(SDL_Renderer *gRenderer, SDL_Texture *SymTexture, int keyNum, int currNoteValue, int x, int y, bool goingUp)
 {
     bool drawAccKey = false;
     bool inKeySig = false;
@@ -376,6 +382,7 @@ void SongPlayer::drawAccKey(SDL_Renderer *gRenderer, SDL_Texture *SymTexture, in
         inKeySig = false;
     }
 }
+*/
 
 void SongPlayer::drawKeySig(SDL_Renderer *gRenderer, SDL_Texture *SymTexture, int keyNum, int x, int y)
 {
@@ -465,6 +472,8 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
     int extraLineX;
 
     LTexture gBackground;
+    LTexture gBarNumber;
+    TTF_Font *gBarFont;
 
     int sharpTrue = 1;
     bool goingUp = true;
@@ -544,6 +553,8 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
         keyNum = keyNum - 256;
     }
 
+    //open the font
+    gBarFont = TTF_OpenFont( "res/fonts/font1.ttf", 20 );
 
     //Apply notes onto play texture
     for (int bar = 0; bar < song->length; bar++){
@@ -597,7 +608,7 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
 
                 if (currNote.duration == 1 && ((nextNote.time == currNote.time && nextnextNote.duration == 1 && nextnextNote.time == currNote.time+1) || eigthChainDouble !=0)){
                     copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 1, 2, pageNum*screen_width + xRender + bitMapCellW*currNote.time, notePos);
-                    drawAccKey(gRenderer, gSymbol.mTexture, keyNum, currNoteValue, pageNum*screen_width + xRender + bitMapCellW*currNote.time, ROW_Y[rowNum], goingUp);
+                    //drawAccKey(gRenderer, gSymbol.mTexture, keyNum, currNoteValue, pageNum*screen_width + xRender + bitMapCellW*currNote.time, ROW_Y[rowNum], goingUp);
                     //draw extra lines for specific notes
                     extraLineX = pageNum*screen_width + xRender + bitMapCellW*currNote.time + 1;
                     drawExtraLines(gRenderer, currNoteValue, extraLineX, notePos, ROW_Y[rowNum], sharpTrue);
@@ -618,7 +629,7 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
                 }
                 else if (currNote.duration == 1 && ((nextNote.duration == 1 && nextNote.time == currNote.time+1) || eigthChain != 0)){
                     copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 1, 2, pageNum*screen_width + xRender + bitMapCellW*currNote.time, notePos);
-                    drawAccKey(gRenderer, gSymbol.mTexture, keyNum, currNoteValue, pageNum*screen_width + xRender + bitMapCellW*currNote.time, ROW_Y[rowNum], goingUp);
+                    //drawAccKey(gRenderer, gSymbol.mTexture, keyNum, currNoteValue, pageNum*screen_width + xRender + bitMapCellW*currNote.time, ROW_Y[rowNum], goingUp);
                     //draw extra lines for specific notes
                     extraLineX = pageNum*screen_width + xRender + bitMapCellW*currNote.time + 1;
                     drawExtraLines(gRenderer, currNoteValue, extraLineX, notePos, ROW_Y[rowNum], sharpTrue);
@@ -639,7 +650,7 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
                 }
                 else{
                     copySymbolCellToSurface(gRenderer, gSymbol.mTexture, 1, currNote.duration, pageNum*screen_width + xRender + bitMapCellW*currNote.time, notePos);
-                    drawAccKey(gRenderer, gSymbol.mTexture, keyNum, currNoteValue, pageNum*screen_width + xRender + bitMapCellW*currNote.time, ROW_Y[rowNum], goingUp);
+                    //drawAccKey(gRenderer, gSymbol.mTexture, keyNum, currNoteValue, pageNum*screen_width + xRender + bitMapCellW*currNote.time, ROW_Y[rowNum], goingUp);
                     //draw extra lines for specific notes
                     extraLineX = pageNum*screen_width + xRender + bitMapCellW*currNote.time + 1;
                     drawExtraLines(gRenderer, currNoteValue, extraLineX, notePos, ROW_Y[rowNum], sharpTrue);
@@ -662,6 +673,10 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
         draw.w = 2;
         draw.h = LINE_GAP*4;
         SDL_RenderFillRect(gRenderer, &draw);
+
+        //label the bar number
+        gBarNumber.loadFromRenderedText(gRenderer, gBarFont, toBarString(bar+1), {0, 0, 0});//text color = black 
+        gBarNumber.render(gRenderer, pageNum*screen_width + xRender-barWidth+5, ROW_Y[rowNum]-25);
     }
 
     //Draw a line at end of score
@@ -762,6 +777,10 @@ void SongPlayer::createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol,
     total_page_num = pageNum;
     //free the LTexture
     gBackground.free();
+    gBarNumber.free();
+	//Free global font
+	TTF_CloseFont( gBarFont );
+    gBarFont = NULL;
 
 }
 

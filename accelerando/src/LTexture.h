@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
+#include <sstream>
 #include "SDLSetup.h"
 
 //Texture wrapper class
