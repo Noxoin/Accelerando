@@ -25,6 +25,7 @@ class SongPlayer {
         int total_page_num;
         double xCord;
         double oldXCord;
+        int count_notes;
         int row_num;
         int page_num;
         int replace_row_num;
@@ -36,7 +37,6 @@ class SongPlayer {
         void drawKeySig(SDL_Renderer *gRenderer, SDL_Texture *SymTexture, int keyNum, int x, int y);
         void createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol, LTexture *gBuffer, Song* song );
         void updateMusicSurface( SDL_Renderer *gRenderer, LTexture* gBuffer, int xCoord, int oldXCoord );
-        void updateScreen(SDL_Renderer *gRenderer, LTexture *gBuffer);
 
     public:
         SongPlayer(std::string filename, SDL_Renderer *gRenderer, LTexture gSymbol, LTexture *gBuffer);

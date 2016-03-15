@@ -282,12 +282,10 @@ void play(std::string filename) {
                 case SDL_USEREVENT:
                     switch(event.user.code) {
                         case NOTE_PRESSED:
-                            Gpio::setValue(11, Gpio::HIGH);
                             sp.notePressedHandler(event);
                             //printf("Piano Key %d was pressed\n", *(unsigned char *)event.user.data1);
                             break;
                         case NOTE_RELEASED:
-                            Gpio::setValue(11, Gpio::LOW);
                             //printf("Piano Key %d was released\n", *(unsigned char *)event.user.data1);
                             break;
                         case TIMER_EVENT:
