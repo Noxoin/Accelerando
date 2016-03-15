@@ -813,17 +813,17 @@ void SongPlayer::updateMusicSurface( SDL_Renderer *gRenderer, LTexture* gBuffer,
     if (oldXCoord%ROW_X >= (-headWidth-startPoint)){
         //remove the previous bar
         //recover the background
-        copy.x = oldXCoord%ROW_X + headWidth + startPoint - barW/2;
-        copy.y = row_num*renderHeight;
-        copy.w = barW;
-        copy.h = barH;
+        ////copy.x = oldXCoord%ROW_X + headWidth + startPoint - barW/2;
+        ////copy.y = row_num*renderHeight;
+        ////copy.w = barW;
+        ////copy.h = barH;
 
-        paste.x = oldXCoord%ROW_X + headWidth + startPoint - barW/2;
-        paste.y = row_num*renderHeight;
-        paste.w = barW;
-        paste.h = barH;
+        ////paste.x = oldXCoord%ROW_X + headWidth + startPoint - barW/2;
+        ////paste.y = row_num*renderHeight;
+        ////paste.w = barW;
+        ////paste.h = barH;
         
-        SDL_RenderCopy(gRenderer, NULL, &copy, &paste);//gBuffer[BACKGROUND].mTexture
+        ////SDL_RenderCopy(gRenderer, gBuffer[BACKGROUND].mTexture, &copy, &paste);
     
         //recover the notes
         copy.x = oldXCoord%ROW_X + headWidth + startPoint - barW/2 + page_num*screen_width;
