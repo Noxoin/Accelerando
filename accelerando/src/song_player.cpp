@@ -23,8 +23,8 @@ void merge(Note * arr, int start, int mid, int end) {
         left[i].time = arr[i+start].time;
     }
     for(int i = 0; i < right_len; ++i) {
-        right[i].value = arr[i+start].value;
-        right[i].time = arr[i+start].time;
+        right[i].value = arr[i+mid].value;
+        right[i].time = arr[i+mid].time;
     }
 
     int i = 0;
@@ -74,21 +74,22 @@ int countNotes(Song * song) {
     return count_notes;
 }
 
-void genPressRelease(Song * song, int count_notes, Note * pressEvents, Note * releaseEvents) {
+void SongPlayer::genPressRelease(Song * song, int count_notes, Note * pressEvents, Note * releaseEvents) {
+
     int k = 0;
     for(int i = 0; i < song->length; ++i) {
         Bar bar = song->bars[i];
-        int sig = bar.tsig_numerator*2;
+        tsig = bar.tsig_numerator;
         for(int j = 0; j < bar.length; ++j) {
             Note note = bar.notes[j];
-            pressEvents[k].time = (i*sig+note.time)*8;
-            releaseEvents[k].time = (i*sig+note.time + note.duration)*8-1;
+            pressEvents[k].time = (i*tsig*2+note.time)*8;
+            releaseEvents[k].time = (i*tsig*2+note.time + note.duration)*8-1;
             pressEvents[k].value = note.value;
             releaseEvents[k].value = note.value;
             k++;
         }
     }
-    mergesort(releaseEvents, 0, k);
+    mergesort(releaseEvents, 0, count_notes);
 }
 
 
@@ -123,7 +124,6 @@ SongPlayer::SongPlayer(std::string filename, SDL_Renderer *gRenderer, LTexture g
     results[3] = 0;
     Gpio::init();
     finished = false;
-    total_notes = 0;
     row_num = 0;
     page_num = 0;
     createMusicSurface(gRenderer, gSymbol, gBuffer, song);
@@ -136,6 +136,10 @@ SongPlayer::SongPlayer(std::string filename, SDL_Renderer *gRenderer, LTexture g
 SongPlayer::~SongPlayer(){
     //Gpio::clean();
     free(song);
+    free(pressedEvents);
+    free(pressedOccurred);
+    free(releasedEvents);
+    free(releasedOccurred);
 }
 
 void SongPlayer::noteReleasedHandler(SDL_Event e) {
@@ -186,12 +190,13 @@ void SongPlayer::notePressedHandler(SDL_Event e) {
     }
 }
 
-
-void SongPlayer::timerHandler( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
-    if(finished) {
-        printf("Song has Finished\n");
-        return;
+void SongPlayer::processTime() {
+    if(tick_count % (16*tsig) == (16*tsig - 4)) {
+        b.beep(466.164, 100);
+    } else if(tick_count % 16 == 12) {
+        b.beep(233.082, 100);
     }
+
 
     //std::thread t1(&SongPlayer::updateScreen, this, gRenderer, gBuffer);
     //t1.detach();
@@ -216,9 +221,19 @@ void SongPlayer::timerHandler( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
             Gpio::setValue(Gpio::getLEDPin(note.value), Gpio::HIGH);
         }
     }
+    
+}
 
-    tick_count++;
-    int tick_mod = (tick_count+16) % 8;
+void SongPlayer::timerHandler( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
+    if(tick_count > releasedEvents[count_notes-1].time + 7) {
+        printf("Song has Finished\n");
+        finished = true;
+        return;
+    }
+
+    processTime();
+
+    int tick_mod = (tick_count) % 8;
     //printf("tick_mod: %d\t", tick_mod);
     if(tick_mod % 2 == 0) {
         oldXCord = xCord;
@@ -230,29 +245,7 @@ void SongPlayer::timerHandler( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
         //printf("set LOW\t");
         Gpio::setValue(Gpio::CLK, Gpio::LOW);
     }
-    /*
-
-    } else if (tick_mod == 6) {
-        //playing note
-        //printf("Playing note at bar: %d, note: %d\n", currBarIndex, currNoteIndex);
-        if(currBarIndex > -1) {
-            Bar bar = song->bars[currBarIndex];
-            for(int i = 0; i < bar.length; ++i) {
-                Note note = bar.notes[i];
-                if(currNoteIndex == note.time) {
-                    int hz = (float) pow(2, (float) (note.value-57)/12)*440;
-                    b.beep(hz, 55000/bar.tempo*note.duration);
-                }
-            }
-        }
-    
-    //if (currBarIndex == song->length && currNoteIndex == 2) {
-    if (currBarIndex == song->length){
-        printf("End of Song\n");
-        finished = true;
-        total_notes += song->bars[currBarIndex].length;
-    }
-    */
+    tick_count++;
 }
 
 

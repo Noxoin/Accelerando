@@ -59,7 +59,6 @@ void *polling(void *arg) {
                     //printf("Note pressed: %02d\n", *note);
                 }
                 SDL_PushEvent(&e);
-                printf("Received %d at %d\n", *(unsigned char *) note, tv.tv_usec);
             }
         } 
         fflush(stdout);
@@ -91,6 +90,7 @@ int KeyboardPoll::start() {
 
 void KeyboardPoll::stop() {
     poll_status= 0;
+    thread_count--;
     pthread_join(thread_list[0], NULL);
 }
 

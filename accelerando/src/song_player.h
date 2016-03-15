@@ -17,7 +17,8 @@ class SongPlayer {
         Bar currBar;
         int currNoteIndex;
         int results[4]; //0 = Perfect, 1 = Good, 2 = Satisfactory; 3 = misses (calculated at the end)
-        
+        int tsig;
+       
         // Rendering
         int screen_width;
         int screen_height;
@@ -25,7 +26,6 @@ class SongPlayer {
         int total_page_num;
         double xCord;
         double oldXCord;
-        int count_notes;
         int row_num;
         int page_num;
         int replace_row_num;
@@ -37,13 +37,15 @@ class SongPlayer {
         void drawKeySig(SDL_Renderer *gRenderer, SDL_Texture *SymTexture, int keyNum, int x, int y);
         void createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol, LTexture *gBuffer, Song* song );
         void updateMusicSurface( SDL_Renderer *gRenderer, LTexture* gBuffer, int xCoord, int oldXCoord );
+        void genPressRelease(Song * song, int count_notes, Note * pressEvents, Note * releaseEvents);
+        void processTime();
 
     public:
         SongPlayer(std::string filename, SDL_Renderer *gRenderer, LTexture gSymbol, LTexture *gBuffer);
         //SongPlayer(std::string filename, Image image);
         ~SongPlayer();
+        int count_notes;
         bool finished;
-        int total_notes;
         int getTempo();
         void getResults(int (&s)[4]);
         //void getResults(int &excellent, int &good, int &sat, int *miss);

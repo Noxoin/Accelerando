@@ -238,12 +238,13 @@ void results_screen(int (&results)[4], int idealHits) {
 void play(std::string filename) {
     SongPlayer sp(filename, gRenderer, gSymbol, gBuffer);
     
-    int ms = 7500/sp.getTempo();
+    int ms = 7000/sp.getTempo();
+    //int ms = (int) 800.0/3.0/sp.getTempo();
 
     printf("Tempo is %dbpm (%d ms)\n", sp.getTempo(), ms);
 
     KeyboardPoll kp;
-    //kp.start();
+    kp.start();
 
     sp.setPlayscreenBackground(gRenderer, gBuffer);
     sp.setFrontScreen(gRenderer, gBuffer);
@@ -301,12 +302,12 @@ void play(std::string filename) {
     }
 
     timer.stop();
-    //kp.stop();
+    kp.stop();
 
     int results[4];
     sp.getResults(results);
     printf("Perfect: %d, Good: %d, Ok: %d, Miss: %d\n", results[0], results[1], results[2], results[3]);
-    results_screen(results, sp.total_notes);
+    results_screen(results, sp.count_notes);
 
     gSymbol.free();
     for(int i = 0; i < 3; ++i) {
