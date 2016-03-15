@@ -1,6 +1,6 @@
 CC=g++
-CFLAGS=-I. -lm -lasound -lSDL2 -lSDL2_image -lSDL2_ttf -lpthread
-CFLAG=-I.
+CFLAGS=-I. -lm -lasound -lSDL2 -lSDL2_image -lSDL2_ttf -lpthread -std=c++0x -O2
+CFLAG=-I. -std=c++0x -O2
 BUILDDIR=build
 SRCDIR=src
 BINDIR=bin
