@@ -23,11 +23,11 @@ class SongPlayer {
         int screen_height;
         int ROW_X;
         int total_page_num;
+        double xCord;
+        double oldXCord;
         int row_num;
         int page_num;
         int replace_row_num;
-        double xCord;
-        double oldXCord;
         void copySymbolCellToSurface( SDL_Renderer *gRenderer, SDL_Texture *SymTexture, int row, int col, int x, int y );
         int resetNoteValue(Note note);
         int lookUpNote(int rowHeight, int currNoteValue, int sharpTrue);
@@ -36,6 +36,7 @@ class SongPlayer {
         void drawKeySig(SDL_Renderer *gRenderer, SDL_Texture *SymTexture, int keyNum, int x, int y);
         void createMusicSurface ( SDL_Renderer *gRenderer, LTexture gSymbol, LTexture *gBuffer, Song* song );
         void updateMusicSurface( SDL_Renderer *gRenderer, LTexture* gBuffer, int xCoord, int oldXCoord );
+        void updateScreen(SDL_Renderer *gRenderer, LTexture *gBuffer);
 
     public:
         SongPlayer(std::string filename, SDL_Renderer *gRenderer, LTexture gSymbol, LTexture *gBuffer);
@@ -50,6 +51,8 @@ class SongPlayer {
         void noteReleasedHandler(SDL_Event e);
         void timerHandler( SDL_Renderer *gRenderer, LTexture* gBuffer );
         void setPlayscreenBackground( SDL_Renderer *gRenderer, LTexture* gBuffer );
+        void setFrontScreen( SDL_Renderer *gRenderer, LTexture* gBuffer );
 };
+
 #endif
 

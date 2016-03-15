@@ -28,7 +28,7 @@ class Gpio {
         const static int AS3 = 14;
         const static int BF3 = 14;
         const static int B3 = 15;
-        const static int C4 = 7;
+        const static int C4 = 10;
         const static int CS4 = 17;
         const static int DF4 = 17;
         const static int D4 = 18;

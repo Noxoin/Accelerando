@@ -176,7 +176,7 @@ void Gpio::init() {
     setDirection(Gpio::DS5, Gpio::OUT);
     setDirection(Gpio::E5, Gpio::OUT);
 
-    //setDirection(,Gpio::OUT);
+    setDirection(11,Gpio::OUT);
 
     Gpio::reset();
 }
@@ -217,7 +217,7 @@ void Gpio::reset(){
     Gpio::setValue(Gpio::DS5, Gpio::LOW);
     Gpio::setValue(Gpio::E5, Gpio::LOW);
 
-    //Gpio::setValue(, Gpio::LOW);
+    Gpio::setValue(11, Gpio::LOW);
 }
 
 void Gpio::setValue(int gpio, int value) {

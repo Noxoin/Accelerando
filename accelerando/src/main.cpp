@@ -236,7 +236,7 @@ void results_screen(int (&results)[4], int idealHits) {
 }
 
 void play(std::string filename) {
-    SongPlayer sp("res/songs/test/Abmaj_1Oct_RH_8n120.mid", gRenderer, gSymbol, gBuffer);
+    SongPlayer sp(filename, gRenderer, gSymbol, gBuffer);
     
     int ms = 7500/sp.getTempo();
 
@@ -246,6 +246,7 @@ void play(std::string filename) {
     //kp.start();
 
     sp.setPlayscreenBackground(gRenderer, gBuffer);
+    sp.setFrontScreen(gRenderer, gBuffer);
     //SDL_UpdateWindowSurface(gWindow);
 
     Timer timer;
@@ -281,12 +282,12 @@ void play(std::string filename) {
                 case SDL_USEREVENT:
                     switch(event.user.code) {
                         case NOTE_PRESSED:
-                            //Gpio::setValue(, Gpio::HIGH);
+                            Gpio::setValue(11, Gpio::HIGH);
                             sp.notePressedHandler(event);
                             //printf("Piano Key %d was pressed\n", *(unsigned char *)event.user.data1);
                             break;
                         case NOTE_RELEASED:
-                            //Gpio::setValue(, Gpio::LOW);
+                            Gpio::setValue(11, Gpio::LOW);
                             //printf("Piano Key %d was released\n", *(unsigned char *)event.user.data1);
                             break;
                         case TIMER_EVENT:
@@ -345,9 +346,12 @@ int main() {
 
         printf("Entering song select\n");
         std::string filename = song_selection();
+        std::string str;
+        str.append("res/songs/");
+        str.append(filename);
         if(quit) { break;}
-        printf("Selected Song is %s\n", filename.c_str());
-        play(filename);
+        printf("Selected Song is %s\n", str.c_str());
+        play(str);
 
     }
 

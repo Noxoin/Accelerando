@@ -8,6 +8,16 @@ int * releasedOccurred;
 int pressedIndex;
 int releasedIndex;
 
+void SongPlayer::setFrontScreen( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
+    updateMusicSurface( gRenderer, gBuffer, (int) xCord, (int)oldXCord );
+}
+
+void SongPlayer::updateScreen(SDL_Renderer *gRenderer, LTexture *gBuffer){
+    oldXCord = xCord;
+    xCord += 5.6198*2;//9.35;
+    updateMusicSurface( gRenderer, gBuffer, (int) xCord, (int)oldXCord );
+}
+
 void merge(Note * arr, int start, int mid, int end) {
     int left_len = mid - start;
     int right_len = end - mid;
@@ -110,7 +120,7 @@ SongPlayer::SongPlayer(std::string filename, SDL_Renderer *gRenderer, LTexture g
     pressedIndex = 0;
     releasedIndex = 0;
 
-    tick_count = -50;
+    tick_count = -58;
     currBarIndex = -1;
     currNoteIndex = -3;
     results[0] = 0;
@@ -120,13 +130,13 @@ SongPlayer::SongPlayer(std::string filename, SDL_Renderer *gRenderer, LTexture g
     Gpio::init();
     finished = false;
     total_notes = 0;
-    xCord = -320;
-    oldXCord = -320;
     row_num = 0;
     page_num = 0;
     createMusicSurface(gRenderer, gSymbol, gBuffer, song);
     int w; 
     int h;
+    xCord = -320;
+    oldXCord = xCord;
 }
 
 SongPlayer::~SongPlayer(){
@@ -210,18 +220,28 @@ void SongPlayer::timerHandler( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
         return;
     }
 
+    //std::thread t1(&SongPlayer::updateScreen, this, gRenderer, gBuffer);
+    //t1.detach();
+/*
+    updateMusicSurface( gRenderer, gBuffer, (int) xCord, (int)oldXCord );
+    oldXCord = xCord;
+    xCord += 5.6198;//9.35;
+*/
+    /*
+
     while(pressedEvents[pressedIndex].time < tick_count - 8) {
         pressedIndex++;
     }
     while(releasedEvents[releasedIndex].time < tick_count - 8) {
         releasedIndex++;
     }
+    */
 
-    /*
     tick_count++;
     int tick_mod = (tick_count+16) % 8;
     //printf("tick_mod: %d\t", tick_mod);
     if(tick_mod % 2 == 0) {
+        updateScreen(gRenderer, gBuffer);
         //printf("set HIGH\t");
         Gpio::setValue(Gpio::CLK, Gpio::HIGH);
     } else {
@@ -263,7 +283,7 @@ void SongPlayer::timerHandler( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
             for(int i = 0; i < bar.length; ++i) {
                 Note note = bar.notes[i];
                 if(light_note == note.time) {
-                    printf("ON: light_note: %d; note.time: %d; duration: %d; note: %d; bar:%d\n", light_note, note.time, note.duration, currNoteIndex, currBarIndex);
+                    //printf("ON: light_note: %d; note.time: %d; duration: %d; note: %d; bar:%d\n", light_note, note.time, note.duration, currNoteIndex, currBarIndex);
                     Gpio::setValue(Gpio::getPin(note.value), Gpio::HIGH);
                 }
             }
@@ -283,7 +303,7 @@ void SongPlayer::timerHandler( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
                 for(int i = 0; i < bar.length; ++i) {
                     Note note = bar.notes[i];
                     if(8 == note.time+note.duration) {
-                        printf("OFF: light_note: 8; note.time: %d; duration: %d\n", note.time, note.duration);
+                        //printf("OFF: light_note: 8; note.time: %d; duration: %d\n", note.time, note.duration);
                         Gpio::setValue(Gpio::getPin(note.value), Gpio::LOW);
                     }
                 }
@@ -292,13 +312,15 @@ void SongPlayer::timerHandler( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
                 for(int i = 0; i < bar.length; ++i) {
                     Note note = bar.notes[i];
                     if(light_note == note.time+note.duration) {
-                        printf("OFF: light_note: %d; note.time: %d; duration: %d\n", light_note, note.time, note.duration);
+                        //printf("OFF: light_note: %d; note.time: %d; duration: %d\n", light_note, note.time, note.duration);
                         Gpio::setValue(Gpio::getPin(note.value), Gpio::LOW);
                     }
                 }
             }
         }
-    } 
+    } else if (tick_mod == 0) {
+        printf("Tick_count: %d\n", tick_count/8);
+    }
     
     //if (currBarIndex == song->length && currNoteIndex == 2) {
     if (currBarIndex == song->length){
@@ -306,13 +328,8 @@ void SongPlayer::timerHandler( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
         finished = true;
         total_notes += song->bars[currBarIndex].length;
     }
-    */
-
-
-    updateMusicSurface( gRenderer, gBuffer, (int) xCord, (int)oldXCord );
-    oldXCord = xCord;
-    xCord += 5.6198;//9.35;
 }
+
 
 int SongPlayer::getTempo() {
     return song->bars[0].tempo;
