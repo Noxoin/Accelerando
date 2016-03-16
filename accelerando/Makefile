@@ -1,6 +1,6 @@
 CC=g++
-CFLAGS=-I. -lm -lasound -lSDL2 -lSDL2_image -lSDL2_ttf -lpthread -std=c++0x -O2
-CFLAG=-I. -std=c++0x -O2
+CFLAGS=-I. -lm -lasound -lSDL2 -lSDL2_image -lSDL2_ttf -lpthread -std=c++0x
+CFLAG=-I. -std=c++0x
 BUILDDIR=build
 SRCDIR=src
 BINDIR=bin
@@ -18,6 +18,10 @@ all: build
 build: $(OBJ)
 	$(CC) -o $(EXE) $^ $(CFLAGS)
 	cp $(EXE) $(BINDIR)/$(EXE)
+
+keyboard: CFLAGS += -DWITHKEYBOARD
+keyboard: CFLAG += -DWITHKEYBOARD
+keyboard: build
 
 debug: CFLAGS += -DDEBUG -g
 debug: CFLAG += -DDEBUG -g

@@ -243,8 +243,10 @@ void play(std::string filename) {
 
     printf("Tempo is %dbpm (%d ms)\n", sp.getTempo(), ms);
 
+#ifdef WITHKEYBOARD
     KeyboardPoll kp;
     kp.start();
+#endif
 
     sp.setPlayscreenBackground(gRenderer, gBuffer);
     sp.setFrontScreen(gRenderer, gBuffer);
@@ -303,7 +305,9 @@ void play(std::string filename) {
     }
 
     timer.stop();
+#ifdef WITHKEYBOARD
     kp.stop();
+#endif
 
     int results[4];
     sp.getResults(results);
