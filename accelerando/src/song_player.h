@@ -24,6 +24,13 @@ class SongPlayer {
         int screen_height;
         int ROW_X;
         int total_page_num;
+        Beeper b;
+        Note * pressedEvents;
+        Note * releasedEvents;
+        int * pressedOccurred;
+        int * releasedOccurred;
+        int pressedIndex;
+        int releasedIndex;
         double xCord;
         double oldXCord;
         int row_num;

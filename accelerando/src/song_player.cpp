@@ -1,12 +1,5 @@
 #include "song_player.h"
 
-Beeper b;
-Note * pressedEvents;
-Note * releasedEvents;
-int * pressedOccurred;
-int * releasedOccurred;
-int pressedIndex;
-int releasedIndex;
 
 void SongPlayer::setFrontScreen( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
     updateMusicSurface( gRenderer, gBuffer, (int) xCord, (int)oldXCord );

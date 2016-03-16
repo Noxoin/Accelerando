@@ -8,6 +8,7 @@
 #include "display_song_sel.h"
 #include "display_result.h"
 #include "SDLSetup.h"
+#include "server_api.h"
 
 const int SCREEN_WIDTH = 1280; const int SCREEN_HEIGHT = 720;
 
@@ -21,6 +22,8 @@ LTexture gBuffer[3];
      
 SDL_Event event;
 int quit = 0;
+
+User *user = NULL;
 
 void init() {
     if(SDL_Init(SDL_INIT_VIDEO) == -1) {
@@ -259,7 +262,6 @@ void play(std::string filename) {
 
     sp.setPlayscreenBackground(gRenderer, gBuffer);
     sp.setFrontScreen(gRenderer, gBuffer);
-    //SDL_UpdateWindowSurface(gWindow);
 
     Timer timer;
 
@@ -330,7 +332,23 @@ void play(std::string filename) {
 
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+
+    if(argc == 3) {
+        printf("Attempting to login in as %s with pass %s\n", argv[1], argv[2]);
+        user = (User *) malloc(sizeof(User));
+        *user = User(argv[1], argv[2]);
+        if(!(user->isLoggedIn())) {
+            printf("Not correct credentials\n");
+            free(user);
+            user = NULL;
+        }
+    } else if(argc == 2) {
+        printf("Not enough arguments\n");
+        exit(0);
+    } else if (argc > 3) {
+        printf("Too many arguments\n");
+    }
 
     init();
     SDL_RenderClear(gRenderer);
