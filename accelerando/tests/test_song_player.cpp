@@ -56,15 +56,15 @@ int main() {
             printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
         }
         //Initialize fonts loading
-        //if( TTF_Init() == -1 )
-        //{
-        //   printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
-        //}
+        if( TTF_Init() == -1 )
+        {
+           printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
+        }
         //gFont = TTF_OpenFont( "res/fonts/font1.ttf", 27 );
     }
 
 
-    SongPlayer sp("res/songs/Chromatic_C_RH_8n120_23Bars_plus.mid", gRenderer, gSymbol, gBuffer);//Cmaj_2Oct_RH_4n120_ScaleRun23Bars.mid
+    SongPlayer sp("res/songs/Cmaj_2Oct_RH_4n120_ScaleRun23Bars.mid", gRenderer, gSymbol, gBuffer);
     
     int ms = 7500/sp.getTempo();
 

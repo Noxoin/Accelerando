@@ -13,13 +13,19 @@ int main( )
 {
     //Main loop flag
     bool quit = false;
+    bool renderTrue = false;
     //Variables storing results
     int idealHits;
     int intScore[SCORE_LEVELS];
     string *strScore = new string[SCORE_LEVELS];
     //Rendered texture
     LTexture gScore[SCORE_LEVELS];
-
+    //data to plot
+    int* data_1;
+    int* data_2;
+    int* data_3;
+    int size_of_data;
+    
     //test data
     idealHits = 100;
     intScore[PERFECT] = 85;
@@ -27,6 +33,45 @@ int main( )
     intScore[BAD] = 8;
     intScore[MISS] = 2;
     
+    size_of_data = 10;
+    data_1 = new int[size_of_data];
+    data_2 = new int[size_of_data];
+    data_3 = new int[size_of_data];
+    data_1[0] = 90;
+    data_1[1] = 91;
+    data_1[2] = 92;
+    data_1[3] = 93;
+    data_1[4] = 94;
+    data_1[5] = 100;
+    data_1[6] = 99;
+    data_1[7] = 98;
+    data_1[8] = 97;
+    data_1[9] = 96;
+    
+    data_2[0] = 84;
+    data_2[1] = 12;
+    data_2[2] = 95;
+    data_2[3] = 17;
+    data_2[4] = 90;
+    data_2[5] = 17;
+    data_2[6] = 88;
+    data_2[7] = 62;
+    data_2[8] = 71;
+    data_2[9] = 73;
+    
+    data_3[0] = 70;
+    data_3[1] = 10;
+    data_3[2] = 0;
+    data_3[3] = 99;
+    data_3[4] = 43;
+    data_3[5] = 86;
+    data_3[6] = 12;
+    data_3[7] = 86;
+    data_3[8] = 12;
+    data_3[9] = 75;
+    
+    //background picture
+    LTexture gBackground;
     //Event handler
     SDL_Event e;
     
@@ -87,6 +132,7 @@ int main( )
     //======================
     //===== Load Media =====
     //=====================
+    loadBackground(gRenderer, &gBackground);
     loadResultsMedia(gRenderer, gScore, strScore, gFont);
 
     
@@ -103,21 +149,29 @@ int main( )
                 quit = true;
             }
         }
+        if(!renderTrue){
+            //Clear screen
+            SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+            SDL_RenderClear( gRenderer );
 
-        //Clear screen
-        SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-        SDL_RenderClear( gRenderer );
+            gBackground.render(gRenderer, 0, 0);
+            //Render current frame
+            gScore[RANK].render( gRenderer, ( SCREEN_WIDTH - gScore[RANK].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[RANK].getHeight() ) / 2-150 );
+            gScore[PERFECT].render( gRenderer, ( SCREEN_WIDTH - gScore[PERFECT].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[PERFECT].getHeight() ) / 2-100 );
+            gScore[GOOD].render( gRenderer, ( SCREEN_WIDTH - gScore[GOOD].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[GOOD].getHeight() ) / 2 -50);
+            gScore[BAD].render( gRenderer, ( SCREEN_WIDTH - gScore[BAD].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[BAD].getHeight() ) / 2 );
+            gScore[MISS].render( gRenderer, ( SCREEN_WIDTH - gScore[MISS].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[MISS].getHeight() ) / 2 +50);
+            gScore[TOTAL].render( gRenderer, ( SCREEN_WIDTH - gScore[TOTAL].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[TOTAL].getHeight() ) / 2 +100);
+            gScore[ACCURACY].render( gRenderer, ( SCREEN_WIDTH - gScore[ACCURACY].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[ACCURACY].getHeight() ) / 2 +150);
 
-        //Render current frame
-        gScore[RANK].render( gRenderer, ( SCREEN_WIDTH - gScore[RANK].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[RANK].getHeight() ) / 2-150 );
-        gScore[PERFECT].render( gRenderer, ( SCREEN_WIDTH - gScore[PERFECT].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[PERFECT].getHeight() ) / 2-100 );
-        gScore[GOOD].render( gRenderer, ( SCREEN_WIDTH - gScore[GOOD].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[GOOD].getHeight() ) / 2 -50);
-        gScore[BAD].render( gRenderer, ( SCREEN_WIDTH - gScore[BAD].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[BAD].getHeight() ) / 2 );
-        gScore[MISS].render( gRenderer, ( SCREEN_WIDTH - gScore[MISS].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[MISS].getHeight() ) / 2 +50);
-        gScore[TOTAL].render( gRenderer, ( SCREEN_WIDTH - gScore[TOTAL].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[TOTAL].getHeight() ) / 2 +100);
-        gScore[ACCURACY].render( gRenderer, ( SCREEN_WIDTH - gScore[ACCURACY].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[ACCURACY].getHeight() ) / 2 +150);
-        //Update screen
-        SDL_RenderPresent( gRenderer );
+            //plot the data
+            plot(gRenderer, data_1, data_2, data_3, size_of_data);
+
+            //Update screen
+            SDL_RenderPresent( gRenderer );
+            printf("im rendering\n");
+            renderTrue = true;
+        }
     }
     
     

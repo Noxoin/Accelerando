@@ -52,7 +52,7 @@ void init() {
     if(TTF_Init() == -1) {
         printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
     }
-    font = TTF_OpenFont("res/fonts/font1.ttf", 52);
+    //font = TTF_OpenFont("res/fonts/font1.ttf", 52);
         
     //screen = SDL_GetWindowSurface(gWindow);
     
@@ -88,6 +88,7 @@ std::string song_selection() {
 
     SDL_RenderClear(gRenderer);
     
+    font = TTF_OpenFont( "res/fonts/font1.ttf", 52 );
     loadSelectScreenMedia(gRenderer, font, gKeyPressSurfaces, gDotTexture, gSongName);
 
     printf("Loaded Media\n");
@@ -199,6 +200,7 @@ void results_screen(int (&results)[4], int idealHits) {
     int r[SCORE_LEVELS];
     string *strScore = new string[SCORE_LEVELS];
     LTexture gScore[SCORE_LEVELS];
+    LTexture gRBackround;
 
     r[PERFECT] = results[0];
     r[GOOD] = results[1];
@@ -207,17 +209,24 @@ void results_screen(int (&results)[4], int idealHits) {
 
     strScore = calculateResult(idealHits, r);
 
+    font = TTF_OpenFont( "res/fonts/font1.ttf", 32 );
     loadResultsMedia(gRenderer, gScore, strScore, font);
+    loadBackground(gRenderer, &gRBackround);
+
     SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(gRenderer);
 
-    gScore[RANK].render( gRenderer, ( SCREEN_WIDTH - gScore[RANK].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[RANK].getHeight() ) / 2-150 );
-    gScore[PERFECT].render( gRenderer, ( SCREEN_WIDTH - gScore[PERFECT].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[PERFECT].getHeight() ) / 2-100 );
-    gScore[GOOD].render( gRenderer, ( SCREEN_WIDTH - gScore[GOOD].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[GOOD].getHeight() ) / 2 -50);
-    gScore[BAD].render( gRenderer, ( SCREEN_WIDTH - gScore[BAD].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[BAD].getHeight() ) / 2 );
-    gScore[MISS].render( gRenderer, ( SCREEN_WIDTH - gScore[MISS].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[MISS].getHeight() ) / 2 +50);
-    gScore[TOTAL].render( gRenderer, ( SCREEN_WIDTH - gScore[TOTAL].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[TOTAL].getHeight() ) / 2 +100);
-    gScore[ACCURACY].render( gRenderer, ( SCREEN_WIDTH - gScore[ACCURACY].getWidth() ) / 2, ( SCREEN_HEIGHT - gScore[ACCURACY].getHeight() ) / 2 +150);
+    gRBackround.render(gRenderer, 0, 0);
+    gScore[RANK].render( gRenderer, ( SCREEN_WIDTH - gScore[RANK].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[RANK].getHeight() ) / 2-150 );
+    gScore[PERFECT].render( gRenderer, ( SCREEN_WIDTH - gScore[PERFECT].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[PERFECT].getHeight() ) / 2-100 );
+    gScore[GOOD].render( gRenderer, ( SCREEN_WIDTH - gScore[GOOD].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[GOOD].getHeight() ) / 2 -50);
+    gScore[BAD].render( gRenderer, ( SCREEN_WIDTH - gScore[BAD].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[BAD].getHeight() ) / 2 );
+    gScore[MISS].render( gRenderer, ( SCREEN_WIDTH - gScore[MISS].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[MISS].getHeight() ) / 2 +50);
+    gScore[TOTAL].render( gRenderer, ( SCREEN_WIDTH - gScore[TOTAL].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[TOTAL].getHeight() ) / 2 +100);
+    gScore[ACCURACY].render( gRenderer, ( SCREEN_WIDTH - gScore[ACCURACY].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[ACCURACY].getHeight() ) / 2 +150);
+
+    //plot(gRenderer, data_1, data_2, data_3, size_of_data);//Array1, 2, 3, and their size
+
     //Update screen
     SDL_RenderPresent( gRenderer );
 
