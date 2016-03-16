@@ -7,12 +7,12 @@
 #include <fcntl.h>
 
 //#define O_WRONLY 01
-const int Gpio::LED_PINS[] = { 13, 14, 15,  // A3 - B3
+const int Gpio::LED_PINS[] = {
                               43, 17, 18, 19, 4, 5, 6, 7, 8, 1, 2, 3, // C4 - B4
                               9, 10, 61, 60, 63 //C5 - E5
                             };
                                 
-const int Gpio::PRESSED_PINS[] = { 13, 14, 15,  // A3 - B3
+const int Gpio::PRESSED_PINS[] = {
                                   29, 17, 18, 19, 4, 5, 6, 7, 8, 1, 2, 3, // C4 - B4
                                   9, 10, 61, 60, 63 //C5 - E5
                                 };
@@ -27,6 +27,9 @@ const std::string gpio_map[68] =    { "",     "pg3",  "pb19", "pb18", "pg6",  "p
                                };
 
 void setDirection(int gpio, int out) {
+    if(gpio < 0) {
+        return;
+    }
     int fd;
     char buf[100];
     sprintf(buf, "/sys/class/gpio/gpio%d_%s/direction", gpio, gpio_map[gpio].c_str());
@@ -47,7 +50,7 @@ void allgpio(int fd) {
     sprintf(buf, "%d", Gpio::CLK);
     write(fd, buf, 100);
 
-    for(int i = 0; i < 20; ++i) {
+    for(int i = 0; i < 17; ++i) {
         sprintf(buf, "%d", Gpio::LED_PINS[i]);
         write(fd, buf, 100);
         sprintf(buf, "%d", Gpio::PRESSED_PINS[i]);
@@ -63,7 +66,7 @@ void Gpio::init() {
     close(fd);
 
     setDirection(Gpio::CLK, Gpio::OUT);
-    for(int i = 0; i < 20; ++i) {
+    for(int i = 0; i < 17; ++i) {
         setDirection(Gpio::LED_PINS[i], Gpio::OUT);
         setDirection(Gpio::PRESSED_PINS[i], Gpio::OUT);
     }
@@ -73,13 +76,16 @@ void Gpio::init() {
 void Gpio::reset(){
 
     Gpio::setValue(Gpio::CLK, Gpio::LOW);
-    for(int i = 0; i < 20; ++i) {
+    for(int i = 0; i < 17; ++i) {
         Gpio::setValue(Gpio::LED_PINS[i], Gpio::LOW);
         Gpio::setValue(Gpio::PRESSED_PINS[i], Gpio::LOW);
     }
 }
 
 void Gpio::setValue(int gpio, int value) {
+    if(gpio < 0) {
+        return;
+    }
     int fd;
     char buf[100];
     sprintf(buf, "/sys/class/gpio/gpio%d_%s/value", gpio, gpio_map[gpio].c_str());
@@ -103,20 +109,18 @@ void Gpio::clean() {
 }
 
 int Gpio::getLEDPin(int midiNote) {
-    if(midiNote < 57 || midiNote - 57 > 19) {
+    if(midiNote < 57 || midiNote - 60 > 16) {
         printf("No such Key\n");
         return -1;
     }
-    printf("Key: %d\n", LED_PINS[midiNote-57]);
-    return LED_PINS[midiNote-57];
+    return LED_PINS[midiNote-60];
 }
 
 int Gpio::getPressedPin(int midiNote) {
-    if(midiNote < 57 || midiNote - 57 > 19) {
+    if(midiNote < 57 || midiNote - 60 > 16) {
         printf("No such Key\n");
         return -1;
     }
-    printf("Key: %d\n", PRESSED_PINS[midiNote-57]);
-    return PRESSED_PINS[midiNote-57];
+    return PRESSED_PINS[midiNote-60];
 }
 
