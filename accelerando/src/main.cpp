@@ -198,7 +198,7 @@ std::string song_selection() {
     return selectedSong;
 }
 
-void results_screen(int (&results)[4], int idealHits) {
+void results_screen(int (&results)[4], int idealHits, int *pressedOccurred, int *releasedOccurred) {
     bool exit = false;
     int r[SCORE_LEVELS];
     string *strScore = new string[SCORE_LEVELS];
@@ -209,6 +209,10 @@ void results_screen(int (&results)[4], int idealHits) {
     r[GOOD] = results[1];
     r[BAD] = results[2];
     r[MISS] = results[3];
+    
+    int *data_1 = new int[idealHits];
+    int *data_2 = new int[idealHits];
+    int *data_3 = new int[idealHits];
 
     strScore = calculateResult(idealHits, r);
 
@@ -228,7 +232,12 @@ void results_screen(int (&results)[4], int idealHits) {
     gScore[TOTAL].render( gRenderer, ( SCREEN_WIDTH - gScore[TOTAL].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[TOTAL].getHeight() ) / 2 +100);
     gScore[ACCURACY].render( gRenderer, ( SCREEN_WIDTH - gScore[ACCURACY].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[ACCURACY].getHeight() ) / 2 +150);
 
-    //plot(gRenderer, data_1, data_2, data_3, size_of_data);//Array1, 2, 3, and their size
+    //Sheena: functions are in display_result.cpp
+    //        data_1, data_2, and data_3 have been declared
+    //data_1 = calData(pressedOccurred, idealHits);
+    //data_2 = calData(releasedOccurred, idealHits);
+    //data_3 = calAvg(data_1, data_2, idealHits);
+    //plot(gRenderer, data_1, data_2, data_3, idealHits);
 
     //Update screen
     SDL_RenderPresent( gRenderer );
@@ -323,7 +332,7 @@ void play(std::string filename) {
     int results[4];
     sp.getResults(results);
     printf("Perfect: %d, Good: %d, Ok: %d, Miss: %d\n", results[0], results[1], results[2], results[3]);
-    results_screen(results, sp.count_notes);
+    results_screen(results, sp.count_notes, sp.pressedOccurred, sp.releasedOccurred);
 
     gSymbol.free();
     for(int i = 0; i < 3; ++i) {

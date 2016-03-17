@@ -21,9 +21,12 @@ int main( )
     //Rendered texture
     LTexture gScore[SCORE_LEVELS];
     //data to plot
-    int* data_1;
-    int* data_2;
-    int* data_3;
+    int *data_1;
+    int *data_2;
+    int *data_3;
+    int *new_data_1;
+    int *new_data_2;
+    int *new_data_3;
     int size_of_data;
     
     //test data
@@ -37,6 +40,9 @@ int main( )
     data_1 = new int[size_of_data];
     data_2 = new int[size_of_data];
     data_3 = new int[size_of_data];
+    new_data_1 = new int[size_of_data];
+    new_data_2 = new int[size_of_data];
+    new_data_3 = new int[size_of_data];
     data_1[0] = 90;
     data_1[1] = 91;
     data_1[2] = 92;
@@ -165,7 +171,10 @@ int main( )
             gScore[ACCURACY].render( gRenderer, ( SCREEN_WIDTH - gScore[ACCURACY].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[ACCURACY].getHeight() ) / 2 +150);
 
             //plot the data
-            plot(gRenderer, data_1, data_2, data_3, size_of_data);
+            new_data_1 = calData(data_1, size_of_data);
+            new_data_2 = calData(data_2, size_of_data);
+            new_data_3 = calAvg(new_data_1, new_data_2, size_of_data);
+            plot(gRenderer, new_data_1, new_data_2, new_data_3, size_of_data);
 
             //Update screen
             SDL_RenderPresent( gRenderer );

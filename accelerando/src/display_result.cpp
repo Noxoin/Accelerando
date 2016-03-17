@@ -90,6 +90,37 @@ void loadResultsMedia(SDL_Renderer *renderer, LTexture *gScore, string *strScore
 	}
 }
 
+
+int* calData(int *data, int size_of_data){
+    int* result = new int[size_of_data];
+    int make_up_score = 0;
+    int k = 0;
+    for(int i = 0; i < size_of_data; i++){
+        result[i] = 0;
+        if (i < 5){
+            k = 5 - i;
+            make_up_score = k*300;
+        }
+        for(int j = 0; j < 6 - k; j++){
+            result[i] += data[i - j];
+        }
+        result[i] = (result[i] + make_up_score)*100/1800;
+        k = 0;
+        make_up_score = 0;
+    }
+    return result;
+}
+
+
+int* calAvg(int *data_1, int *data_2, int size_of_data){
+    int* data_3 = new int[size_of_data];
+    for(int i = 0; i < size_of_data; i++){
+        data_3[i] = (data_1[i] + data_2[i])/2;
+    }
+    return data_3;
+}
+
+
 void plot(SDL_Renderer *renderer, int *data_1, int *data_2, int *data_3, int size_of_data){
     int x = 20;
     int y = SCREEN_HEIGHT-20;
@@ -127,7 +158,7 @@ void plot(SDL_Renderer *renderer, int *data_1, int *data_2, int *data_3, int siz
     }
 
     x = 20;
-    SDL_SetRenderDrawColor( renderer, 0x46, 0x82, 0xB4, 0xFF );
+    SDL_SetRenderDrawColor( renderer, 0x32, 0xCD, 0x32, 0xFF ); 
     for(int i = 0; i < size_of_data-1; i++){
         for(int j = 0; j < 3; j++){
             SDL_RenderDrawLine(renderer, x, y - y_pu*data_2[i] - 1 + j, x+x_pu, y - y_pu*data_2[i+1] -1 + j);
@@ -136,10 +167,10 @@ void plot(SDL_Renderer *renderer, int *data_1, int *data_2, int *data_3, int siz
     }
 
     x = 20;
-    SDL_SetRenderDrawColor( renderer, 0x32, 0xCD, 0x32, 0xFF ); 
+    SDL_SetRenderDrawColor( renderer, 0x99, 0xCD, 0xFF, 0xFF );
     for(int i = 0; i < size_of_data-1; i++){
-        for(int j = 0; j < 3; j++){
-            SDL_RenderDrawLine(renderer, x, y - y_pu*data_3[i] - 1 + j, x+x_pu, y - y_pu*data_3[i+1] -1 + j);
+        for(int j = 0; j < 7; j++){
+            SDL_RenderDrawLine(renderer, x, y - y_pu*data_3[i] - 3 + j, x+x_pu, y - y_pu*data_3[i+1] -3 + j);
         }
         x += x_pu;
     }

@@ -31,6 +31,12 @@ string* calculateResult(int idealHits, int *intScore);
 //load text texture
 void loadResultsMedia(SDL_Renderer *renderer, LTexture *gScore, string *strScore, TTF_Font *font);
 
+//calculate data
+int* calData(int *data, int size_of_data);
+
+//average
+int* calAvg(int *data_1, int *data_2, int size_of_data);
+
 //plot the data
 void plot(SDL_Renderer *renderer, int *data_1, int *data_2, int *data_3, int size_of_data);
 
