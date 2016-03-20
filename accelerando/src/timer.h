@@ -4,7 +4,7 @@ class Timer {
     private:
         SDL_TimerID timer;
         Uint32 delay;
-        bool enabled;
+        bool enabled = false;
     public:
         Timer();
         ~Timer();

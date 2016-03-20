@@ -27,8 +27,6 @@ class SongPlayer {
         Beeper b;
         Note * pressedEvents;
         Note * releasedEvents;
-        int * pressedOccurred;
-        int * releasedOccurred;
         int pressedIndex;
         int releasedIndex;
         double xCord;
@@ -52,6 +50,8 @@ class SongPlayer {
         ~SongPlayer();
         int count_notes;
         bool finished;
+        int * pressedOccurred;
+        int * releasedOccurred;
         int getTempo();
         void getResults(int (&s)[4]);
         //void getResults(int &excellent, int &good, int &sat, int *miss);

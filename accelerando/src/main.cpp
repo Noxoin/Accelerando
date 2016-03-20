@@ -284,7 +284,7 @@ void play(std::string filename) {
                 case SDL_QUIT:
                     quit = true;
                     break;
-                case SDL_KEYDOWN:
+                /*case SDL_KEYDOWN:
                     switch(event.key.keysym.sym) {
                         case SDLK_UP:
                             timer.start(ms);
@@ -301,7 +301,7 @@ void play(std::string filename) {
                             printf("You pressed the right arrow!!\n");
                             break;
                     }
-                    break;
+                    break;*/
                 case SDL_USEREVENT:
                     switch(event.user.code) {
                         case NOTE_PRESSED:
@@ -319,6 +319,7 @@ void play(std::string filename) {
                             break;
                     }
                     free(event.user.data1);
+                    free(event.user.data2);
                     break;
             }
         }
