@@ -48,11 +48,14 @@ class SongPlayer {
         SongPlayer(std::string filename, SDL_Renderer *gRenderer, LTexture gSymbol, LTexture *gBuffer);
         //SongPlayer(std::string filename, Image image);
         ~SongPlayer();
+        char * songName;
         int count_notes;
         bool finished;
         int * pressedOccurred;
         int * releasedOccurred;
         int getTempo();
+        int * pressedOccurred;
+        int * releasedOccurred;
         void getResults(int (&s)[4]);
         //void getResults(int &excellent, int &good, int &sat, int *miss);
         void notePressedHandler(SDL_Event e);

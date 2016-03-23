@@ -92,7 +92,7 @@ void loadResultsMedia(SDL_Renderer *renderer, LTexture *gScore, string *strScore
 
 
 int* calData(int *data, int size_of_data){
-    int* result = new int[size_of_data];
+    int* result = (int *) malloc(sizeof(int)*size_of_data);
     int make_up_score = 0;
     int k = 0;
     for(int i = 0; i < size_of_data; i++){
@@ -113,7 +113,7 @@ int* calData(int *data, int size_of_data){
 
 
 int* calAvg(int *data_1, int *data_2, int size_of_data){
-    int* data_3 = new int[size_of_data];
+    int* data_3 = (int *) malloc(sizeof(int)*size_of_data);
     for(int i = 0; i < size_of_data; i++){
         data_3[i] = (data_1[i] + data_2[i])/2;
     }

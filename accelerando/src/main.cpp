@@ -198,7 +198,7 @@ std::string song_selection() {
     return selectedSong;
 }
 
-void results_screen(int (&results)[4], int idealHits, int *pressedOccurred, int *releasedOccurred) {
+void results_screen(int (&results)[4], int idealHits, int *pressedOccurred, int *releasedOccurred, std::string filename) {
     bool exit = false;
     int r[SCORE_LEVELS];
     string *strScore = new string[SCORE_LEVELS];
@@ -210,10 +210,6 @@ void results_screen(int (&results)[4], int idealHits, int *pressedOccurred, int 
     r[BAD] = results[2];
     r[MISS] = results[3];
     
-    int *data_1 = new int[idealHits];
-    int *data_2 = new int[idealHits];
-    int *data_3 = new int[idealHits];
-
     strScore = calculateResult(idealHits, r);
 
     font = TTF_OpenFont( "res/fonts/font1.ttf", 32 );
@@ -233,11 +229,21 @@ void results_screen(int (&results)[4], int idealHits, int *pressedOccurred, int 
     gScore[ACCURACY].render( gRenderer, ( SCREEN_WIDTH - gScore[ACCURACY].getWidth() ) / 2, ( SCREEN_HEIGHT/2 - gScore[ACCURACY].getHeight() ) / 2 +150);
 
     //Sheena: functions are in display_result.cpp
-    //        data_1, data_2, and data_3 have been declared
-    //data_1 = calData(pressedOccurred, idealHits);
-    //data_2 = calData(releasedOccurred, idealHits);
-    //data_3 = calAvg(data_1, data_2, idealHits);
-    //plot(gRenderer, data_1, data_2, data_3, idealHits);
+            //data_1, data_2, and data_3 have been declared
+    int *data_1 = calData(pressedOccurred, idealHits);
+    int *data_2 = calData(releasedOccurred, idealHits);
+    int *data_3 = calAvg(data_1, data_2, idealHits);
+    plot(gRenderer, data_1, data_2, data_3, idealHits);
+
+    if(user != NULL) {
+        int ideal = 300*idealHits;
+        int score = 300*r[PERFECT] + 100*r[GOOD] + 50*r[BAD];
+        float accuracy = (float) (score*100.0) / ideal;
+        std:string num = filename.substr(0, 2);
+        int song_id = stoi(num, NULL);
+        user->recordScore(song_id, score, accuracy);
+    }
+
 
     //Update screen
     SDL_RenderPresent( gRenderer );
@@ -254,12 +260,19 @@ void results_screen(int (&results)[4], int idealHits, int *pressedOccurred, int 
         }
     }
 
+    free(data_1);
+    free(data_2);
+    free(data_3);
+
 }
 
 void play(std::string filename) {
-    SongPlayer sp(filename, gRenderer, gSymbol, gBuffer);
+    std::string str;
+    str.append("res/songs/");
+    str.append(filename);
+    SongPlayer sp(str, gRenderer, gSymbol, gBuffer);
     
-    int ms = 7000/sp.getTempo();
+    int ms = 3000/sp.getTempo();
     //int ms = (int) 800.0/3.0/sp.getTempo();
 
     printf("Tempo is %dbpm (%d ms)\n", sp.getTempo(), ms);
@@ -333,7 +346,7 @@ void play(std::string filename) {
     int results[4];
     sp.getResults(results);
     printf("Perfect: %d, Good: %d, Ok: %d, Miss: %d\n", results[0], results[1], results[2], results[3]);
-    results_screen(results, sp.count_notes, sp.pressedOccurred, sp.releasedOccurred);
+    results_screen(results, sp.count_notes, sp.pressedOccurred, sp.releasedOccurred, filename);
 
     gSymbol.free();
     for(int i = 0; i < 3; ++i) {
@@ -387,12 +400,9 @@ int main(int argc, char *argv[]) {
 
         printf("Entering song select\n");
         std::string filename = song_selection();
-        std::string str;
-        str.append("res/songs/");
-        str.append(filename);
         if(quit) { break;}
-        printf("Selected Song is %s\n", str.c_str());
-        play(str);
+        printf("Selected Song is %s\n", filename.c_str());
+        play(filename);
 
     }
 

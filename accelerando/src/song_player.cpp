@@ -76,7 +76,7 @@ void SongPlayer::genPressRelease(Song * song, int count_notes, Note * pressEvent
         for(int j = 0; j < bar.length; ++j) {
             Note note = bar.notes[j];
             pressEvents[k].time = (i*tsig*2+note.time)*8;
-            releaseEvents[k].time = (i*tsig*2+note.time + note.duration)*8-4;
+            releaseEvents[k].time = (i*tsig*2+note.time + note.duration)*8-3;
             pressEvents[k].value = note.value;
             releaseEvents[k].value = note.value;
             k++;
@@ -136,7 +136,7 @@ SongPlayer::~SongPlayer(){
 
 void SongPlayer::noteReleasedHandler(SDL_Event e) {
     Gpio::setValue(Gpio::getPressedPin(*(unsigned char*) e.user.data1), Gpio::LOW);
-    for(int i = pressedIndex; releasedEvents[i].time < tick_count + 8; ++i) {
+    for(int i = releasedIndex; releasedEvents[i].time < tick_count + 8; ++i) {
         if(releasedEvents[i].value != *(unsigned char*) e.user.data1 || releasedOccurred[i] > 0) {
             continue;
         } else {
@@ -182,13 +182,16 @@ void SongPlayer::notePressedHandler(SDL_Event e) {
 void SongPlayer::timerHandler( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
     if(tick_count > releasedEvents[count_notes-1].time + 7) {
         printf("Song has Finished\n");
+        for(int i = 0; i < count_notes; ++i) {
+            printf("Pressed: %d, %d\t Released: %d, %d\n", pressedEvents[i].time, pressedOccurred[i], releasedEvents[i].time, releasedOccurred[i]);
+        }
         finished = true;
         return;
     }
 
-    if((tick_count+16*tsig) % (16*tsig) == (16*tsig - 4)) {
+    if((tick_count+16*tsig) % (16*tsig) == (16*tsig - 3)) {
         b.beep(466.164, 100);
-    } else if((tick_count + 16*tsig) % 16 == 12) {
+    } else if((tick_count + 16*tsig) % 16 == 13) {
         b.beep(233.082, 100);
     }
 
@@ -221,7 +224,7 @@ void SongPlayer::timerHandler( SDL_Renderer *gRenderer, LTexture* gBuffer ) {
         Gpio::setValue(Gpio::CLK, Gpio::HIGH);
         oldXCord = xCord;
         xCord += 5.6198*2;//9.35;
-        updateMusicSurface( gRenderer, gBuffer, (int) xCord, (int)oldXCord );
+        //updateMusicSurface( gRenderer, gBuffer, (int) xCord, (int)oldXCord );
         //printf("set HIGH\t");
     } else {
         //printf("set LOW\t");

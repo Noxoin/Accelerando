@@ -77,7 +77,6 @@ User::User(char * user, char * password) {
 }
 
 User::~User() {
-    free(token);
 }
 
 bool User::isLoggedIn(){

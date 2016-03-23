@@ -109,16 +109,14 @@ void Gpio::clean() {
 }
 
 int Gpio::getLEDPin(int midiNote) {
-    if(midiNote < 57 || midiNote - 60 > 16) {
-        printf("No such Key\n");
+    if(midiNote < 60 || midiNote - 60 > 16) {
         return -1;
     }
     return LED_PINS[midiNote-60];
 }
 
 int Gpio::getPressedPin(int midiNote) {
-    if(midiNote < 57 || midiNote - 60 > 16) {
-        printf("No such Key\n");
+    if(midiNote < 60 || midiNote - 60 > 16) {
         return -1;
     }
     return PRESSED_PINS[midiNote-60];

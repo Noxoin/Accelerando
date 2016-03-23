@@ -10,6 +10,7 @@ int readFileNames() {
 	struct dirent *dirp;
 	char dirname[]="res/songs/";
         int num_of_songs;
+        file_names.clear();
 
 	if((dp=opendir(dirname))==NULL){
 		printf("opendir error");
